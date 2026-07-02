@@ -53,5 +53,5 @@ None of these conditions are met — verdict stands as TP.
 | Analyst | Jimil Joshi |
 | Verdict | TP |
 | Confidence | High |
-| Triage Time | ~10–12 minutes |
+| Triage Time | Not tracked (retroactively logged) |
 | Escalated | Yes (would be, in real SOC) |
