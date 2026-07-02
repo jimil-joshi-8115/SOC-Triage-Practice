@@ -41,17 +41,6 @@ Running list of triage lessons learned, to reinforce over time:
 
 ---
 
-## Detection Gaps Identified (Host-Wide)
-
-| EventCode | Purpose | Status | First Seen |
-|---|---|---|---|
-| 4720 | Account Created | Not logging (0 events) | Case_002 |
-| 4698 | Scheduled Task Created | Not logging (0 events) | Case_003 |
-
-**Pattern:** Two separate audit subcategories both showing zero events strongly suggests a host-wide local audit policy gap (not two isolated coincidences). Recommend running `auditpol /get /category:*` on JIMIL-JOSHI to identify the full scope of disabled subcategories.
-
----
-
 ## How This Is Updated
 
 After each case is closed (verdict.md finalized), this file is updated with:
