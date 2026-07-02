@@ -52,6 +52,6 @@ None of these apply in this simulated case — verdict stands as TP.
 | Analyst | Jimil Joshi |
 | Verdict | TP |
 | Confidence | High |
-| Triage Time | ~15 minutes |
+| Triage Time | Not tracked (retroactively logged) |
 | Escalated | Yes (would be, in real SOC) |
 | Detection Gap Identified | Yes — EventCode 4720 not logging (audit policy) |
