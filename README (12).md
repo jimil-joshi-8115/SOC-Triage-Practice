@@ -25,7 +25,7 @@ SOC-Triage-Practice/
 | Case | Title | Verdict | MITRE | Status |
 |---|---|---|---|---|
 | [Case_001](Cases/Case_001/) | Encoded PowerShell Execution | 🔴 TP | T1059.001, T1027, T1105 | ✅ Closed |
-| Case_002 | net user /add buried in noise | TBD | T1136 | ⏳ Planned |
+| [Case_002](Cases/Case_002/) | Local Account Creation Buried in Noise | 🔴 TP | T1136.001, T1059.001 | ✅ Closed |
 | Case_003 | schtasks /create, legit-looking name | TBD | T1053.005 | ⏳ Planned |
 | Case_004 | rundll32.exe firing | TBD | — | ⏳ Planned |
 | Case_005 | Multiple failed logons, same account | TBD | T1110 | ⏳ Planned |
