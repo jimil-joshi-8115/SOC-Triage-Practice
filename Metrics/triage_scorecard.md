@@ -8,12 +8,12 @@ Running performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 6 |
-| True Positives (TP) | 4 |
+| Total Cases Closed | 7 |
+| True Positives (TP) | 5 |
 | False Positives (FP) | 1 |
 | Ambiguous | 1 |
-| Correct Verdicts (analyst's final call vs. actual) | 6 / 6 |
-| Average Triage Time | ~3.25 minutes (Case_003: 3 min, Case_004: 2 min, Case_005: 4 min, Case_006: 4 min) |
+| Correct Verdicts (analyst's final call vs. actual) | 7 / 7 |
+| Average Triage Time | ~3.2 minutes |
 | Most Common FP Pattern (so far) | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | Most Missed/Corrected TP Signal (so far) | Assuming "-EncodedCommand present" = FP without decoding the payload first (Case_001) |
 
@@ -29,6 +29,7 @@ Running performance log across all closed cases in SOC-Triage-Practice.
 | Case_004 | FP | FP | FP | ✅ | 2 minutes | Correctly matched command line against documented Noise-Baselines entry (Windows PCA) and closed quickly without over-escalating a known-benign pattern. |
 | Case_005 | TP | TP | TP | ✅ | 4 minutes | First Phase 1 case (no checklist hints given). Reasoning had two early missteps corrected before final verdict: (1) misread "Unknown user name or bad password" as confirming an invalid username, and (2) treated rapid repeated failures against a known account as reassuring rather than a brute-force signal. Corrected after re-running follow-up checks (4624/4740) independently. Also surfaced a secondary finding: no account lockout policy triggered after 5 failures. |
 | Case_006 | TP | Ambiguous | TP | ✅ (terminology correction) | 4 minutes | Correctly identified password-spray pattern (multiple distinct accounts, none in baseline, ~35 sec window) as suspicious, but initially mislabeled it "Ambiguous" due to conflating "needs L2 escalation" with the Ambiguous verdict category. Corrected: escalation is a response action, not a verdict downgrade — Ambiguous is reserved for cases where evidence itself cannot distinguish intent (see Case_003). |
+| Case_007 | TP | TP | TP | ✅ | 3 minutes | Correctly identified registry Run key persistence (T1547.001) independently — masquerading value name, hidden window flag, benign standalone payload. Correctly reasoned why this is TP (persistence achieved immediately upon write) rather than Ambiguous (contrast with Case_003, where the trigger was scheduled but unconfirmed). |
 
 ---
 
@@ -42,6 +43,7 @@ Running list of triage lessons learned, to reinforce over time:
 4. **Case_004:** A documented baseline match speeds up triage significantly, but should still be sanity-checked against a quick secondary indicator pass (path, network, account, timing) to avoid confirmation bias — an attacker could theoretically reuse a known-benign DLL/function name to blend in.
 5. **Case_005:** A known/valid account being targeted is not reassuring — it can mean the attacker already has a valid username and only needs the password, which is a narrower and often more dangerous scenario than random guessing. Also: "it didn't succeed" does not mean "not a TP" — a failed brute-force attempt is still malicious behavior worth escalating. Generic Windows failure messages ("Unknown user name or bad password") must not be over-interpreted as confirming which part failed.
 6. **Case_006:** "Needs escalation to L2" is not the same as "Ambiguous." A confirmed TP is still TP even when it requires further handling — Ambiguous is reserved specifically for cases where the evidence cannot itself distinguish malicious from benign intent. Also: multiple distinct accounts attempted rapidly = password spraying (T1110.003), a distinct technique from single-account brute-force (T1110, Case_005).
+7. **Case_007:** A completed persistence action (e.g. registry Run key write) is treated as TP even with a benign current payload, distinct from a scheduled-but-unconfirmed persistence trigger (Case_003, Ambiguous). The distinction is whether the persistence mechanism is already active versus pending activation.
 
 ---
 
