@@ -34,11 +34,12 @@ SOC-Triage-Practice/
 | [Case_008](Cases/Case_008/) | certutil.exe Living-off-the-Land Download | 🔴 TP | T1105 | ✅ Closed |
 | [Case_009](Cases/Case_009/) | **Phase 2 Batch 1:** New Service (TP) + nslookup Beaconing (Ambiguous) + Get-Clipboard (FP) | Mixed (3 alerts) | T1543.003, T1071.004 | ✅ Closed |
 | [Case_010](Cases/Case_010/) | **Phase 2 Batch 2:** vssadmin Delete Shadows (TP) + GitHub Script Download (Ambiguous) + whoami/RDP (Ambiguous) | Mixed (3 alerts) | T1490, T1105 | ✅ Closed |
-| Case_011 | Phase 2 Batch 3 | TBD | — | ⏳ Planned |
-| Case_012 | Phase 2 Batch 4 | TBD | — | ⏳ Planned |
-| Case_013 | Phase 2 Batch 5 | TBD | — | ⏳ Planned |
-| Case_014 | Phase 2 Batch 6 | TBD | — | ⏳ Planned |
-| Case_015-020 | Phase 3 — Full Queue Simulation | TBD | — | ⏳ Planned |
+| [Case_011](Cases/Case_011/) | **Phase 2 Batch 3:** Disable Defender (TP) + mshta LOLBin (TP) + tasklist/lsass (Ambiguous) | Mixed (3 alerts) | T1562.001, T1218.005, T1003.001 | ✅ Closed |
+| [Case_012](Cases/Case_012/) | **Phase 2 Batch 4:** IEX Download-Execute (TP) + Admin Group Add (TP) + Outbound RDP (Ambiguous) | Mixed (3 alerts) | T1059.001, T1105, T1098 | ✅ Closed |
+| [Case_013](Cases/Case_013/) | **Phase 2 Batch 5:** ScriptBlock Logging Disabled (TP) + ntds.dit Copy Attempt (TP) + 3 AM Logon (Ambiguous) | Mixed (3 alerts) | T1562, T1003.003, T1078 | ✅ Closed |
+| [Case_014](Cases/Case_014/) | **Phase 2 Batch 6 (Final):** Firewall Rule Port 4444 (TP) + Outlook→PowerShell (TP) + wmic/whoami (Ambiguous) | Mixed (3 alerts) | T1562.004, T1204.002, T1047 | ✅ Closed |
+| [Case_015](Cases/Case_015/) | **Phase 3 Batch 1:** Scheduled Task (TP) + Defender Disable/mid-queue interrupt (TP) + DNS DGA Pattern (Ambiguous) + Failed Logon x2 (Ambiguous) + USB Connected (Ambiguous) | Mixed (5 alerts, live interrupt) | T1053.005, T1562.001, T1071.004, T1052 | ✅ Closed |
+| Case_016-020 | Phase 3 — Full Queue Simulation (continued) | TBD | — | ⏳ Planned |
 
 *Note: planned verdicts above are working hypotheses only — actual verdicts are determined during investigation and may differ from the plan.*
 
@@ -52,8 +53,10 @@ SOC-Triage-Practice/
 
 Cases follow a **phased difficulty structure**:
 - **Phase 1 (Cases 5-8):** ✅ Complete — Ticket + raw data only, no checklist hints given.
-- **Phase 2 (Cases 9-14):** 🔄 In Progress — Mixed batches of 2-3 alerts with SIEM-style severity labels; analyst determines investigation order independently.
-- **Phase 3 (Cases 15-20):** Full queue simulation — multiple alerts, mixed severity, time pressure, broader log source variety.
+- **Phase 2 (Cases 9-14):** ✅ Complete — Mixed batches of 2-3 alerts with SIEM-style severity labels; analyst determined investigation order independently in all 6 batches.
+- **Phase 3 (Cases 15-20):** 🔄 In Progress — Full queue simulation: multiple alerts arriving together and mid-investigation, prioritization interrupts, broader log source variety, and shift-handoff-style summaries.
+
+**Post-Phase-3 addition (planned):** an interactive rapid-fire triage drill tool (chat-based, no Splunk required) to build speed and pattern-recognition reflexes on top of the deep-investigation skills developed in Cases 001-020. Results will be logged in a new `Quickfire-Drills/` folder.
 
 ---
 
