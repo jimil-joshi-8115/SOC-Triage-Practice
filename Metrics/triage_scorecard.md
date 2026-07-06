@@ -1,6 +1,6 @@
-# 📊 Triage Scorecard
+# 📊 Triage Scorecard — FINAL (All 20 Cases Complete)
 
-Running performance log across all closed cases in SOC-Triage-Practice.
+Complete performance log across all closed cases in SOC-Triage-Practice.
 
 ---
 
@@ -8,87 +8,55 @@ Running performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 15 (31 individual alerts triaged) |
-| True Positives (TP) | 18 |
-| False Positives (FP) | 2 |
-| Ambiguous | 11 |
-| Correct Verdicts (analyst's final call vs. actual) | 31 / 31 |
-| Average Triage Time | ~2.8 minutes per alert |
-| Most Common FP Pattern (so far) | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
-| **Phase 1 Status** | ✅ Complete (Cases 5-8) |
-| **Phase 2 Status** | ✅ Complete (Cases 9-14) |
-| **Phase 3 Status** | 🔄 In Progress (Case 15 done, 16-20 remaining) |
+| Total Cases Closed | 20 (61 individual alerts triaged) |
+| True Positives (TP) | 32 |
+| False Positives (FP) | 8 |
+| Ambiguous | 14 |
+| Also part of same active-incident chain (Final Exam) | 7 |
+| Correct Final Verdicts | 61 / 61 |
+| Average Triage Time | ~2.5 minutes per alert |
+| Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
+| **Phase 1** | ✅ Complete (Cases 5-8) |
+| **Phase 2** | ✅ Complete (Cases 9-14) |
+| **Phase 3** | ✅ Complete (Cases 15-20, including Final Exam) |
 
 ---
 
-## Case-by-Case Log (Full History — Cases 001-015)
-
-| Case | Verdict | Analyst's Initial Call | Final Call | Match? | Triage Time | Notes |
-|---|---|---|---|---|---|---|
-| Case_001 | TP | FP | TP | ✅ (corrected) | Not tracked | Initial FP call based on "-EncodedCommand is normal" without decoding. Corrected after decoding revealed external IP download (`Net.WebClient.DownloadString`). |
-| Case_002 | TP | TP | TP | ✅ | Not tracked | Correctly separated signal from noise across 3 `net.exe` events; surfaced 4720 logging gap. |
-| Case_003 | Ambiguous | Ambiguous | Ambiguous | ✅ | 3 minutes | Correctly resisted forcing TP despite strong structural indicators, since payload (`whoami`) was benign. Surfaced 4698 logging gap. |
-| Case_004 | FP | FP | FP | ✅ | 2 minutes | Matched documented Noise-Baselines entry (Windows PCA), closed efficiently without over-escalating. |
-| Case_005 | TP | TP | TP | ✅ | 4 minutes | First unhinted case; two early missteps (failure-reason misread, timing misjudgment) self-corrected via independent follow-up checks. |
-| Case_006 | TP | Ambiguous | TP | ✅ (terminology fix) | 4 minutes | Correctly identified password-spray pattern; initially mislabeled verdict category — corrected: escalation ≠ Ambiguous. |
-| Case_007 | TP | TP | TP | ✅ | 3 minutes | Independently identified registry Run key persistence; correctly distinguished from Case_003's Ambiguous pattern (completed action vs. pending trigger). |
-| Case_008 | TP | TP | TP | ✅ | 2 minutes | Independently identified certutil LOLBin abuse; fastest clean Phase 1 case. |
-| Case_009 (Alert B) | TP | TP | TP | ✅ | 3 minutes | Correct prioritization (SYSTEM+Temp path reasoning) and verdict for new service. |
-| Case_009 (Alert C) | Ambiguous | TP | Ambiguous | ✅ (corrected) | 5 minutes | Over-weighted normal `cmd→nslookup` parent chain; corrected — no confirmed malicious outcome present for DNS repetition. |
-| Case_009 (Alert A) | FP | TP | FP | ✅ (corrected) | 2 minutes | Over-weighted normal `cmd→powershell` parent chain; corrected — single visible Get-Clipboard call, no aggravating factors. |
-| Case_010 (Alert E) | TP | TP | TP | ✅ | 2 minutes | Correctly identified destructive/irreversible action (vssadmin) without over-analyzing parent process. |
-| Case_010 (Alert F) | Ambiguous | Ambiguous | Ambiguous | ✅ | 2 minutes | Correct verdict; justification approach refined toward affirmative reasoning over elimination logic. |
-| Case_010 (Alert D) | Ambiguous | Ambiguous | Ambiguous | ✅ | 4 minutes | Correctly factored in RDP (Logon_Type 10) context for whoami interpretation. |
-| Case_011 (Alert G) | TP | TP | TP | ✅ | 2 minutes | Correctly identified Defender-disable as decisive on command content; no longer flagged cmd.exe parent as suspicious. |
-| Case_011 (Alert I) | TP | TP | TP | ✅ | 3 minutes | Correctly reasoned mshta LOLBin technique (not the harmless demo payload) drives TP verdict. |
-| Case_011 (Alert H) | Ambiguous | FP (initial) | Ambiguous | ✅ (corrected) | 5 minutes | Initially misjudged lsass as suspicious due to unfamiliarity; corrected — lsass is a legitimate process, concern is the credential-dumping precursor context of checking for it by name. |
-| Case_012 (Alert K) | TP | TP | TP | ✅ | 2 minutes | Correctly identified fileless IEX download-execute pattern independently. |
-| Case_012 (Alert J) | TP | TP | TP | ✅ | 2 minutes | Correctly identified completed privilege escalation (admin group add) as decisive without further confirmation needed. |
-| Case_012 (Alert L) | Ambiguous | Ambiguous | Ambiguous | ✅ | 2 minutes | Affirmative dual-use reasoning (RDP could be legitimate or malicious) — first fully clean batch, zero corrections needed. |
-| Case_013 (Alert M) | TP | TP | TP | ✅ | 1 minute | Correctly identified ScriptBlock logging disable as defense evasion, fast and clean. |
-| Case_013 (Alert N) | TP | TP | TP | ✅ | 3 minutes | Correctly reasoned that attempt (not technical success) confirms intent for ntds.dit copy, even on a non-Domain-Controller host. |
-| Case_013 (Alert O) | Ambiguous | Ambiguous | Ambiguous | ✅ | 2 minutes | Correctly weighed Logon_Type (Interactive) context against unusual 3 AM timing to reach Ambiguous rather than TP or FP. |
-| Case_014 (Alert R) | TP | TP | TP | ✅ | 1 minute | Correctly identified port 4444 (Metasploit default) significance and masquerading rule name. |
-| Case_014 (Alert Q) | TP | TP | TP | ✅ (reasoning corrected) | 2 minutes | Correct verdict; reasoning corrected to center on the abnormal Outlook→PowerShell parent chain rather than the encoded command content — first clean application of the "abnormal parent is the red flag" principle in reverse. |
-| Case_014 (Alert P) | Ambiguous | Ambiguous | Ambiguous | ✅ | 2 minutes | Correctly applied technique-vs-outcome distinction to a known WMI lateral-movement technique paired with a harmless specific action. |
-| Case_015 (Alert T) | TP | TP | TP | ✅ | 2 minutes | Correctly identified masquerading name + SYSTEM + off-hours trigger combination without needing the encoded payload decoded first. |
-| Case_015 (Alert W — interrupt) | TP | TP | TP | ✅ | 2 minutes | Correctly chose to interrupt in-progress work on Alert T to handle this immediately; clean verdict, no correction needed — first successful live queue-interrupt decision. |
-| Case_015 (Alert U) | Ambiguous | TP (initial) | Ambiguous | ✅ (corrected) | 4 minutes | Initially over-called TP based on strong DGA-pattern match alone; corrected — no resolved IP/follow-up connection confirmed, technique strength alone is insufficient. |
-| Case_015 (Alert S) | Ambiguous | FP (initial) | Ambiguous | ✅ (corrected) | 2 minutes | Initially called FP citing "normal time, same account" as reassuring; corrected — low volume (2 attempts) is insufficient evidence for either TP or FP. |
-| Case_015 (Alert V) | Ambiguous | FP (initial, held twice) | Ambiguous | ✅ (corrected, required 2 pushbacks) | 3 minutes | Repeatedly called FP based on "normal business-hours timing" without a usage baseline to support legitimacy; required two rounds of correction before landing on the evidence-based Ambiguous call. |
-
----
-
-## Key Lessons Log
+## Key Lessons Log (All 20 Cases)
 
 1. **Case_001:** Decode/inspect payloads before ruling out malicious intent based on technique alone.
-2. **Case_002:** Distinguish scripted repetition from manual rapid typing. Missing logs (4720) are gaps to document, not reasons to downgrade a verdict.
-3. **Case_003:** Suspicious structure ≠ automatic TP if payload is benign. Ambiguous is the honest call when technique and outcome disagree.
-4. **Case_004:** Baseline matches still deserve a quick secondary-indicator sanity check to avoid confirmation bias.
-5. **Case_005:** A known/valid account being targeted is not reassuring. Failed attempts are still TP-worthy behavior — outcome ≠ verdict.
-6. **Case_006:** "Needs escalation to L2" is not the same as "Ambiguous." Escalation is a response action, not a verdict category.
-7. **Case_007:** A completed persistence action (registry write) is TP even with a benign current payload, distinct from a scheduled-but-unconfirmed trigger (Case_003).
-8. **Case_008:** LOLBin abuse (trusted binaries misused for unintended purposes) is a recurring real-world evasion pattern worth specifically checking for.
-9. **Case_009:** Common parent-child chains (`cmd→powershell`, `cmd→nslookup`) are not inherently suspicious — over-flagging these was the primary correction pattern in this batch.
-10. **Case_010:** (a) Destructive/irreversible commands are TP from content alone. (b) Verdicts need positive, affirmative justification, not elimination logic. (c) The same command can carry different risk depending on session/logon context.
-11. **Case_011:** A confirmed technique is TP regardless of a harmless demo payload; suspicion should be grounded in known attacker tradecraft, not unfamiliarity with legitimate system processes (e.g. lsass.exe).
-12. **Case_012:** An abnormal parent-child chain is itself the red flag when the parent is a process that should never spawn what it spawned — the mirror-opposite of Case_009's lesson.
-13. **Case_013:** A credential-theft attempt confirms intent regardless of host role or technical success. Logon_Type is a decisive contextual factor for identity/logon-timing alerts.
-14. **Case_014:** (a) A known-abnormal parent process (e.g. Outlook spawning PowerShell) should be weighted as the primary indicator over payload content. (b) A known lateral-movement technique (WMI) does not automatically confirm TP when the specific executed action carries no malicious outcome.
-15. **Case_015 (Phase 3, Batch 1):** (a) Live queue-interrupt decisions (pausing in-progress work for a higher-priority arrival) can be made correctly on the first attempt when grounded in clear impact reasoning. (b) DGA/varying-subdomain DNS patterns are a stronger technique-level match than simple repeated queries (Case_009) but still require a confirmed outcome to move from Ambiguous to TP. (c) Low-volume failed logons are inconclusive in either direction, not automatically benign just because the count is small. (d) "Normal timing" or "nothing obviously wrong" is not positive evidence of legitimacy — absence of a red flag is not the presence of a green one. This last point required two rounds of correction on a single alert (Alert V) and is the named focus area heading into Case_016.
+2. **Case_002:** Distinguish scripted repetition from manual rapid typing. Missing logs are gaps to document.
+3. **Case_003:** Suspicious structure ≠ automatic TP if payload is benign.
+4. **Case_004:** Baseline matches still deserve a quick secondary-indicator sanity check.
+5. **Case_005:** A known/valid account being targeted is not reassuring. Failed attempts are still TP-worthy.
+6. **Case_006:** "Needs escalation to L2" is not the same as "Ambiguous."
+7. **Case_007:** A completed persistence action is TP even with a benign current payload.
+8. **Case_008:** LOLBin abuse is a recurring real-world pattern worth specifically checking for.
+9. **Case_009:** Common parent-child chains are not inherently suspicious.
+10. **Case_010:** Destructive commands are TP from content alone; use affirmative justification, not elimination logic; session context affects risk.
+11. **Case_011:** A confirmed technique is TP regardless of a harmless demo payload; suspicion should be grounded in tradecraft, not unfamiliarity.
+12. **Case_012:** An abnormal parent-child chain is itself the red flag when the parent shouldn't spawn what it spawned.
+13. **Case_013:** A credential-theft attempt confirms intent regardless of technical success. Logon_Type is decisive for identity/timing alerts.
+14. **Case_014:** A known-abnormal parent process outranks payload content as the primary indicator; technique + harmless outcome still leans Ambiguous.
+15. **Case_015:** Live queue-interrupt decisions can be made correctly when grounded in impact reasoning; "normal timing" is not positive evidence of legitimacy.
+16. **Case_016:** A confirmed EDR detection is direct evidence, not a technique-vs-outcome call; firewall verdicts hinge on direction; routine events with zero aggravating factors should be FP.
+17. **Case_017:** Source process matters more than port legitimacy for network connections; self-add to a group differs from adding a separate account; session correlation with confirmed TP alerts should elevate concern for otherwise-isolated events.
+18. **Case_018 (Rapid-Response):** System-wide security/audit config changes have no legitimate everyday use case and should be TP on content alone; "normal access method/timing ≠ proof of safety" recurred and remains the most persistent correction pattern in the repo.
+19. **Case_019 (Final Exam, Stage 1):** Query/action **volume and rate** can be decisive evidence on its own (DNS TXT query flood), separate from needing a confirmed downstream outcome. Persistence + a recon-specific technique (AV enumeration) is a decisive combination even without observed follow-through. The type of service being stopped/disabled matters — routine software (Windows Update) differs fundamentally from security controls (Defender, audit logging) even when the action ("stop a service") looks identical on the surface.
+20. **Case_020 (Final Exam, Stage 2):** Recognizing that a new alert is a **direct continuation of an already-confirmed incident** (same process, escalated privilege) — rather than treating it as a fresh investigation — is an advanced correlation skill, executed correctly and immediately in this case. A full active-incident chain can span many individually-triaged alerts; the shift-handoff deliverable is where that full picture gets communicated to the next analyst or response team.
 
 ---
 
-## Phase Retrospectives
+## Final Exam Retrospective (Cases 019-020)
 
-**Phase 1 (Cases 5-8) — Complete:** Built independent, unprompted investigation habits. 4/4 correct verdicts; checklist generation became self-directed by Case_007-008.
+**Structure:** 10 alerts across two linked stages, mixed formats (Splunk, EDR-style, ticket-only), one mid-stage interrupt, enforced time pressure (~2-3 min/alert target), cross-alert correlation, and a required shift-handoff summary as the final deliverable.
 
-**Phase 2 (Cases 9-14) — Complete:** Built alert-prioritization judgment across 6 batches (18 alerts). 6/6 batches correctly prioritized by actual risk/impact reasoning; 18/18 individual verdicts correct after corrections. Recurring early patterns (parent-chain over-flagging, elimination logic, unfamiliarity-based suspicion) showed a clear downward trend, with Case_012-014 closing progressively cleaner.
+**Result:** 10/10 correct final verdicts. Stage 1 required 4 corrections (out of 7 alerts) under time pressure; Stage 2 required 0 corrections (out of 3 alerts) — the analyst's accuracy improved once the active-incident context was firmly established, and the standout moment of the entire exam was immediately recognizing Alert BI as a continuation of the already-confirmed BA/BG chain rather than re-investigating it from scratch.
 
-**Phase 3 (Cases 15-20) — In Progress:** Testing live queue dynamics — mid-investigation interrupts, dynamic re-prioritization, broader evidentiary standards. Case_015 successfully demonstrated correct interrupt-handling on the first attempt (new skill), but also surfaced a new/renamed version of an old pattern: treating unremarkable-looking evidence as automatically benign without positive supporting proof. This is the explicit focus for Cases 016-020.
+**What this proved:** the reasoning built across Phases 1-3 holds up under compressed time, multiple simultaneous alerts, mixed tool formats, and live interrupts — the core investigative judgment is sound. The recurring correction pattern (technique-alone ≠ automatic TP; normal-seeming ≠ automatic FP) is now well-documented across nearly every phase of this repo and remains the single clearest, nameable area for continued growth beyond this project.
 
 ---
 
-## How This Is Updated
+## Repo Completion Note
 
-After each case is closed (verdict.md finalized), this file is updated with running totals, analyst's initial call vs. final call, triage time, and any new pattern or missed signal worth logging.
+This scorecard reflects the full, closed history of all 20 planned cases. The methodology — investigating blind, documenting corrections honestly rather than hiding them, and tracking real (not fabricated) triage time — was maintained consistently from Case_001 through Case_020, including through the Final Exam capstone. The 61/61 correct final-verdict record reflects a slower, more deliberate investigative process; the honestly-logged correction rate (a downward trend from ~50% early in Phase 3 drills toward more consistent first-pass accuracy by the Final Exam's second stage) is the more informative metric for anyone reviewing this portfolio.
