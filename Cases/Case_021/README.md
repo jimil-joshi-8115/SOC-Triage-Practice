@@ -1,41 +1,57 @@
-# Case_022 — Business Email Compromise (BEC): Impossible Travel + Malicious Inbox Rule + Fraudulent Payment Redirection
+# Case_021 — Sign-in from Risky IP + Legacy Authentication (Azure AD)
 
-**Phase:** 4 (Cases 21–30) — Email/Phishing domain
-**Format:** Microsoft Defender for Office 365 — Email Security Alerts (3-alert batch)
-**Splunk verified:** Yes — sample O365 Unified Audit Log data ingested via CSV upload
-(`source="o365_unifiedauditlog_case022.csv"`, `host="JIMIL-JOSHI"`, `sourcetype="csv"`)
+**Phase:** 4 (Cases 21–30) — Cloud domain introduced
+**Format:** Microsoft Sentinel Incident (ticket-only, no Splunk verification — analyst's call)
+**Severity:** Medium
 
 ---
 
-## Alerts
+## Incident
 
 ```
-Alert BC-001 — User reported email as phishing
-  Severity: Informational
-  Sender: it-support@corptenant-helpdesk.com
-  Recipient: k.desai@corptenant.com
-  Subject: "Your mailbox storage is full - action required"
-  SPF/DKIM/DMARC: Fail/Fail/Fail
-  Sender domain age: 6 days
-  User action: Reported only — no click, no credential entry
+Microsoft Sentinel
+─────────────────────────────────────────────
+Incident ID:        INC-40217
+Title:               'Sign-in from a risky IP address' correlated with 
+                      'Legacy authentication protocol used'
+Severity:            Medium
+Status:              New
+Owner:               Unassigned
+Created time:        2026-07-31 03:14:22 UTC
 
-Alert BC-002 — Impossible travel + inbox rule creation
-  Severity: High
-  Account: k.desai@corptenant.com
-  Event 1: Sign-in, Ahmedabad, India — 09:14 UTC
-  Event 2: Sign-in, Warsaw, Poland — 09:41 UTC (27 min gap, ~5,900 km)
-  Event 3: New inbox rule '..' — moves invoice/payment/wire-transfer emails to
-           hidden folder + forwards copy to fin-review@corptenant-audit.net
-  MFA: Not satisfied (legacy auth, IMAP4)
+Alert 1: Sign-in from a risky IP address
+  Provider:          Microsoft Entra ID Protection
+  Description:       User signed in from an IP address that has been flagged 
+                      as risky by Microsoft Threat Intelligence.
+  Entities:
+    Account:         r.mehta@corptenant.onmicrosoft.com
+    IP:              41.223.118.52
+    Location:        Lagos, Nigeria (ASN: AS37282, hosting/consumer ISP mix)
 
-Alert BC-003 — High-volume outbound to external domain
-  Severity: Medium
-  Account: k.desai@corptenant.com
-  Detail: 14 emails in 6 minutes to finance/accounts/ap/billing@vendorpartner-inc.com,
-          subject variations of "Updated bank details for upcoming payment"
-  Time: 09:47–09:53 UTC, immediately following BC-002's inbox rule
+Alert 2: Legacy authentication protocol used
+  Provider:          Microsoft Entra ID Protection
+  Description:       Sign-in occurred using a legacy authentication protocol,
+                      which does not support modern security controls (MFA,
+                      Conditional Access).
+  Entities:
+    Account:         r.mehta@corptenant.onmicrosoft.com
+    Client app:      IMAP4
+    Application:     Office 365 Exchange Online
+    Conditional Access Result: 
+                     Not applied (legacy protocol not evaluated)
+    Result:          Success
+    Device state:    Not registered, Not compliant
+
+Alert 2.5 (correlated context): 
+    User's last 30-day sign-in geography: Ahmedabad (95%), Mumbai (5%)
+
+MITRE ATT&CK (Sentinel-tagged):  InitialAccess, T1078 (Valid Accounts)
 ```
+
+**Investigation Graph tab (Sentinel):** Account `r.mehta` ↔ IP `41.223.118.52` ↔ 2 alerts, 1 incident.
+
+---
 
 ## Task
 
-TP / FP / Ambiguous for each alert, plus note any correlation between them.
+Determine TP / FP / Ambiguous. No hints — full independent judgment call.

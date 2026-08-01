@@ -1,70 +1,32 @@
-# Case_022 — Investigation
+# Case_021 — Investigation
 
 **Analyst:** Jimil Joshi
-**Verification method:** Splunk — sample O365 Unified Audit Log data ingested via CSV upload
-(`source="o365_unifiedauditlog_case022.csv"`, `host="JIMIL-JOSHI"`, `sourcetype="csv"`)
-**Triage time:** Start 09:19, End ~09:56 (real, tracked)
+**Verification method:** Ticket-only — no Splunk query run for this case (analyst decision;
+same precedent as Case_018's rapid-response, no-Splunk-verification format).
 
-## BC-001 — Phishing report
+## Reasoning
 
-**Query:**
-```
-source="o365_unifiedauditlog_case022.csv" host="JIMIL-JOSHI" sourcetype="csv"
-Operation="ReportPhishing"
-| table _time, UserId, ClientIP, City, Country, ClientApp, Result, Details
-```
+Reviewed the Sentinel incident directly, without pulling raw sign-in log data:
 
-**Result:** 1 event. User reported the message via Report Message add-in; sender IP still
-Ahmedabad (normal baseline location); no click, no credential entry logged anywhere.
+1. **Legacy auth protocol (IMAP4)** — this bypasses Conditional Access and MFA entirely.
+   It's not just "old tech," it's a known technique used specifically to sidestep modern
+   auth controls, because legacy protocols are never evaluated by CA policy.
 
-**Reasoning:** No compromise indicator on the reporting user's own session. Awareness process
-worked as intended — user correctly identified and reported without engaging.
+2. **Geography deviation** — user's 30-day baseline is 95% Ahmedabad, 5% Mumbai. Lagos,
+   Nigeria is a first-seen location with no travel plausibility given the tight time window.
 
-## BC-002 — Impossible travel + inbox rule
+3. **Risky IP flagged by Microsoft Threat Intelligence** — external validation, not just an
+   internal heuristic.
 
-**Query:**
-```
-source="o365_unifiedauditlog_case022.csv" host="JIMIL-JOSHI" sourcetype="csv"
-UserId="k.desai@corptenant.com"
-Operation="UserLoggedIn" OR Operation="New-InboxRule"
-| table _time, Operation, ClientIP, City, Country, ClientApp, Result, Details
-| sort _time
-```
+4. **Device state** — unregistered, non-compliant. Another deviation from the user's normal
+   posture (baseline assumed managed corporate device given Ahmedabad-based daily pattern).
 
-**Result:** 7 events — baseline shows 5 clean Ahmedabad logins (Modern Auth) over the
-preceding 3 days. Then: 09:14 normal Ahmedabad login → 09:41 Warsaw, Poland login via legacy
-IMAP4 (MFA not satisfied, Conditional Access not applied) → 09:43 malicious inbox rule created
-(hides invoice/payment/wire-transfer emails in an unused folder, forwards copy externally,
-`StopProcessingRules: True` to suppress user visibility).
+5. **Result: Success** — this is the critical point. A successful legacy-auth sign-in from a
+   flagged IP, from an unseen location, on a non-compliant device, is not reassuring — success
+   here means the attacker got in, not that the system is working correctly.
 
-**Reasoning:** 27-minute gap between Ahmedabad and Warsaw logins is not physically possible —
-textbook impossible travel. Legacy auth bypassing MFA is the same access-vector pattern
-confirmed TP in Case_021. The inbox rule itself has no legitimate business purpose: targeting
-financial keywords, hiding in "RSS Subscriptions," forwarding to an external domain, and
-stopping further rule processing are all attacker tradecraft, not user error.
+## Verdict reasoning
 
-## BC-003 — High-volume outbound
-
-**Query:**
-```
-source="o365_unifiedauditlog_case022.csv" host="JIMIL-JOSHI" sourcetype="csv"
-UserId="k.desai@corptenant.com"
-Operation="SendAs"
-| table _time, ClientIP, City, Country, Details
-| sort _time
-```
-
-**Result:** 14 events, all from the Warsaw IP (185.220.101.47), 09:47–09:53, immediately
-following the BC-002 inbox rule. All sent to vendorpartner-inc.com finance/accounts/ap/billing
-addresses, subject variations of "Updated bank details for upcoming payment."
-
-**Reasoning:** Same session as the confirmed BC-002 compromise. This is the fraud payload being
-executed — a vendor email compromise (VEC) attempt to redirect a real payment to
-attacker-controlled banking details, sent from inside a trusted, legitimate mailbox.
-
-## Correlation
-
-BC-001 is unrelated to the compromise chain (different sender, different vector, no execution) —
-stands alone as FP. BC-002 and BC-003 are the same incident: account takeover via legacy-auth
-bypass → malicious inbox rule for concealment/exfil → fraudulent payment redirection emails,
-all within a single ~12-minute attacker session.
+All four indicators point the same direction with no mitigating explanation available in the
+ticket (no travel record, no known VPN egress, no admin test flagged). Stacked deviations +
+external threat intel flag + successful auth = compromise, not noise.
