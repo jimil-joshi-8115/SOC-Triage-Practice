@@ -2,12 +2,24 @@
 
 **Phase:** 4 (Cases 21–30) — Email/Phishing domain
 **Format:** Microsoft Defender for Office 365 — Email Security Alerts (3-alert batch)
-**Splunk verified:** Yes — sample O365 Unified Audit Log data ingested via CSV upload
-(`source="o365_unifiedauditlog_case022.csv"`, `host="JIMIL-JOSHI"`, `sourcetype="csv"`)
+**Splunk verified:** ✅ Yes
+
+**Data source:**
+```
+source      = o365_unifiedauditlog_case022.csv
+host        = JIMIL-JOSHI
+sourcetype  = csv
+Total events indexed: 22 (16 for k.desai@corptenant.com, 4 baseline for a.patel@corptenant.com,
+                          1 phishing-report event, plus baseline logins)
+```
+
+Raw event data was NOT handed over in the ticket — alerts below reflect only what Sentinel/Defender
+surfaced at trigger time. All confirmation, baselining, and correlation was done by querying the
+indexed data directly in Splunk (see `investigation.md` for the exact SPL queries run and results).
 
 ---
 
-## Alerts
+## Alerts (as received at trigger time)
 
 ```
 Alert BC-001 — User reported email as phishing
@@ -38,4 +50,6 @@ Alert BC-003 — High-volume outbound to external domain
 
 ## Task
 
-TP / FP / Ambiguous for each alert, plus note any correlation between them.
+TP / FP / Ambiguous for each alert, plus note any correlation between them — verified against
+indexed Splunk data, not assumed from the ticket alone.
+
