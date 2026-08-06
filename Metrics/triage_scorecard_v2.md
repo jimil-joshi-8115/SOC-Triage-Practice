@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–24 (Phase 4 In Progress)
+# 📊 Triage Scorecard — Cases 1–26 (Phase 4 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 24 (72 individual alerts triaged) |
-| True Positives (TP) | 42 |
-| False Positives (FP) | 9 |
-| Ambiguous | 14 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain) | 16 |
-| Correct Final Verdicts | 72 / 72 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min total |
+| Total Cases Closed | 26 (81 individual alerts triaged) |
+| True Positives (TP) | 48 |
+| False Positives (FP) | 11 |
+| Ambiguous | 15 |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain) | 21 |
+| Correct Final Verdicts | 81 / 81 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -49,6 +49,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 22. **Case_022 (Phase 4, Email/BEC, 3-alert batch, Splunk-verified):** A self-reported phishing email with no execution stays FP even when a real compromise is unfolding elsewhere in the same tenant — don't let proximity to a confirmed incident inflate an unrelated, clean alert. Conversely, once account takeover is confirmed (impossible travel + legacy-auth MFA bypass), a malicious inbox rule and subsequent high-volume fraud emails from the same session are not separate judgment calls — they're the same incident's concealment step and payload step. Zero corrections.
 23. **Case_023 (Phase 4, AWS/GuardDuty, 2-finding batch, ticket-only):** Cloud IAM discovery-then-escalation follows the same pattern as endpoint privilege escalation — a burst of never-before-seen enumeration API calls is decisive on its own (same class of evidence as Case_019's DNS TXT flood), and creating a new access key for a *separate*, higher-privileged account is the real damage, not the initial login. Correctly recognized the second finding as a continuation of the first (identical source IP, direct time sequence) rather than a fresh investigation — third consecutive Phase 4 case with zero corrections.
 24. **Case_024 (Phase 4, Mixed Endpoint + Cloud, 5-alert queue, Splunk-verified, first real-breach-grounded scenario):** A routine, individually-defensible action (a helpdesk password reset with standard verification) becomes a confirmed TP only in light of what follows it — verdict depends on chain context, not the isolated event. Persistence mechanisms (a rogue federated IdP bypassing MFA entirely) outrank even privilege escalation as the highest-priority remediation target, since they survive credential resets on the original account. Recognized the specific "disable AV, then delete shadow copies" combination as pre-ransomware staging from tool usage pattern, not tool identity (both are legitimate Windows binaries). Full 5-alert chain correctly triaged as one incident. Zero corrections, fastest chain-resolution time in the repo (7 minutes for 5 correlated alerts).
+25. **Case_025 (Phase 4, Mixed queue, 6-alert batch with live interrupt, ticket-only, Colonial Pipeline-grounded):** Initial pattern-matching on a surface-level signal ("failed logons = suspicious") without checking account/host/IP correlation against the rest of the queue produced an incorrect first-pass TP on a deliberately-included discrimination-test alert (E-002) — corrected to FP once cross-referenced and found to match a documented, recurring benign pattern. Reinforces that shared presence in a queue does not imply shared incident membership. Correctly recognized that a live interrupt confirming active ransomware encryption (E-006) doesn't just add one more TP to the list — it flips response priority entirely, from "investigate the queue in order" to "contain first, document after." 1 correction, 7-minute total triage time for a 6-alert chain with a mid-investigation interrupt.
+26. **Case_026 (Phase 4, Azure AD, 3-alert batch, Splunk-verified):** A confirmed calendar entry is positive, concrete mitigating evidence (F-001, FP) — not the same thing as merely "no red flags found." Conversely, concrete attacker tradecraft (adding a second MFA method instead of replacing the original, F-002) is decisive on its own without needing a location anomaly to stand on. The key lesson: an alert with an established legitimate baseline pattern (frequent international travel) and only a single missing-confirmation anomaly (no calendar entry) — with MFA satisfied normally throughout — does not have the same evidentiary weight as either of the other two, and forcing it into TP or FP is guessing rather than concluding; Ambiguous with a specific out-of-band verification plan is the correct, defensible call (F-003). Initial instinct defaulted to TP on F-003 before this distinction was made explicit — corrected and logged transparently, consistent with the repo's stated honesty methodology even under direct pressure to omit it.
 
 ---
 
@@ -101,6 +103,25 @@ incident. TP × 5, single correlated chain, 0 corrections, resolved in 7 minutes
 methodology going forward: cite the real public incident a scenario is grounded in directly in
 investigation.md, keeping practice scenarios realistic without using any real, sensitive, or
 non-public data.
+
+**Case_025** (Mixed queue, 6-alert batch with live interrupt, ticket-only): adapted from the
+May 2021 Colonial Pipeline / DarkSide ransomware attack (dormant VPN account, no MFA → lateral
+movement → ~100GB exfiltration → ransomware). TP × 5 + FP × 1 (E-002, a deliberate
+discrimination-test alert unrelated to the main chain). 1 correction — an initial surface-level
+TP call on E-002 was corrected to FP after checking account/host/IP correlation against the
+rest of the queue. Live interrupt (E-006, active file encryption) correctly triggered an
+immediate re-prioritization from "investigate in order" to "contain first." 7-minute total
+triage time. Splunk/ticket-only format now alternates case-by-case per repo methodology
+(Case_024 Splunk → Case_025 ticket-only → Case_026 Splunk, etc.).
+
+**Case_026** (Azure AD, 3-alert batch, Splunk-verified): FP (F-001, travel-calendar-confirmed
+sign-in) + TP (F-002, password reset + second MFA method added without removing the original —
+concrete persistence tradecraft) + Ambiguous (F-003, atypical-travel flag on an account with an
+established legitimate travel baseline, MFA satisfied normally, only a missing calendar entry
+as the sole anomaly). 1 correction — F-003 was initially called TP on surface pattern-matching
+before being corrected to Ambiguous after directly comparing its evidence strength against
+F-001 and F-002. Logged transparently per repo methodology even when asked directly to omit it
+from the record.
 
 ---
 
