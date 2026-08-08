@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–27 (Phase 4 In Progress)
+# 📊 Triage Scorecard — Cases 1–28 (Phase 4 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 27 (85 individual alerts triaged) |
-| True Positives (TP) | 50 |
-| False Positives (FP) | 12 |
+| Total Cases Closed | 28 (89 individual alerts triaged) |
+| True Positives (TP) | 53 |
+| False Positives (FP) | 13 |
 | Ambiguous | 16 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain) | 21 |
-| Correct Final Verdicts | 85 / 85 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain) | 24 |
+| Correct Final Verdicts | 89 / 89 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -52,6 +52,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 25. **Case_025 (Phase 4, Mixed queue, 6-alert batch with live interrupt, ticket-only, Colonial Pipeline-grounded):** Initial pattern-matching on a surface-level signal ("failed logons = suspicious") without checking account/host/IP correlation against the rest of the queue produced an incorrect first-pass TP on a deliberately-included discrimination-test alert (E-002) — corrected to FP once cross-referenced and found to match a documented, recurring benign pattern. Reinforces that shared presence in a queue does not imply shared incident membership. Correctly recognized that a live interrupt confirming active ransomware encryption (E-006) doesn't just add one more TP to the list — it flips response priority entirely, from "investigate the queue in order" to "contain first, document after." 1 correction, 7-minute total triage time for a 6-alert chain with a mid-investigation interrupt.
 26. **Case_026 (Phase 4, Azure AD, 3-alert batch, Splunk-verified):** A confirmed calendar entry is positive, concrete mitigating evidence (F-001, FP) — not the same thing as merely "no red flags found." Conversely, concrete attacker tradecraft (adding a second MFA method instead of replacing the original, F-002) is decisive on its own without needing a location anomaly to stand on. The key lesson: an alert with an established legitimate baseline pattern (frequent international travel) and only a single missing-confirmation anomaly (no calendar entry) — with MFA satisfied normally throughout — does not have the same evidentiary weight as either of the other two, and forcing it into TP or FP is guessing rather than concluding; Ambiguous with a specific out-of-band verification plan is the correct, defensible call (F-003). Initial instinct defaulted to TP on F-003 before this distinction was made explicit — corrected and logged transparently, consistent with the repo's stated honesty methodology even under direct pressure to omit it.
 27. **Case_027 (Phase 4, Mixed multi-domain queue, 4-alert batch, ticket-only):** A confirmed, complete malware delivery chain (macro → LOLBin → execution) needs no further debate (G-001, TP). A service account's total behavioral deviation from its established role (a CI/CD-only account suddenly changing bucket ACLs) combined with immediate, concrete impact (public exposure of database backups) is TP on its own — briefly discussed as possible Ambiguous before confirming the deviation and impact were both concrete rather than speculative (G-002). G-003 is the notable entry: strong technical indicators (failed SPF/DKIM/DMARC, lookalike domain, CEO/finance/wire-transfer targeting) were weighed by the analyst against the absence of a malicious payload and zero recipient engagement, and the analyst's final judgment differed from the reviewer's technical read — both positions logged transparently per repo methodology, since an honest record preserves genuine analyst disagreement rather than only the "expected" answer.
+28. **Case_028 (Phase 4, Hybrid Identity — Azure AD + On-Prem AD, 4-alert batch, ticket-only):** A Kerberoasting indicator (RC4-downgraded TGS request burst) is decisive from rate and encryption-choice alone, without needing a confirmed cracked credential (same evidentiary class as Case_019's DNS TXT flood and Case_023's IAM enumeration burst). The critical insight of this case: when a low-value account's suspicious activity is immediately followed by unusual activity on a *high-value bridge account* (the Azure AD Connect sync account connecting on-prem and cloud identity), the second event is the real severity driver — an unverified OAuth app receiving `Directory.ReadWrite.All` from that compromised bridge account represents a directory-wide, credential-reset-resistant backdoor, which is a categorically different and higher-priority remediation target than the initial Kerberoasting alone. Full chain correctly triaged as one incident spanning both on-prem and cloud in under 6 minutes of attacker activity. Zero corrections, 3-minute triage time — fastest in the repo.
 
 ---
 
@@ -134,6 +135,16 @@ a queue. Notable for G-003: analyst and reviewer reasoning diverged, and both pe
 preserved in the case files rather than the record being adjusted to hide the disagreement —
 directly tested when the analyst asked for a correction to be omitted from a prior case
 (Case_026) and the repo's honesty methodology was upheld.
+
+**Case_028** (Hybrid Identity — Azure AD + On-Prem AD, 4-alert batch, ticket-only): TP (H-001,
+Kerberoasting via RC4-downgraded TGS request burst) + TP (H-002, Azure AD Connect sync/bridge
+account compromised 3 minutes later by the same actor) + TP (H-003, unverified OAuth app
+granted Directory.ReadWrite.All by the compromised bridge account 2 minutes after that) + FP
+(H-004, documented automation account, routine scheduled GPO refresh). Full chain correctly
+recognized as one hybrid-identity takeover spanning on-prem and cloud in under 6 minutes — the
+sync/bridge account compromise (H-002) was identified as the pivotal escalation point that
+turns a contained on-prem credential-theft attempt into full Azure AD directory control (H-003).
+0 corrections, 3-minute triage time — fastest in the repo to date.
 
 ---
 
