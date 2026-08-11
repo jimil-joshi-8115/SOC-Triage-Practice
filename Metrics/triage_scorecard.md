@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–30 (Phase 4 Complete)
+# 📊 Triage Scorecard — Cases 1–31 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,18 +8,19 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 30 (101 individual alerts triaged) |
-| True Positives (TP) | 63 |
+| Total Cases Closed | 31 (103 individual alerts triaged) |
+| True Positives (TP) | 65 |
 | False Positives (FP) | 15 |
 | Ambiguous | 16 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain) | 34 |
-| Correct Final Verdicts | 101 / 101 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain) | 36 |
+| Correct Final Verdicts | 103 / 103 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
 | **Phase 3** | ✅ Complete (Cases 15-20, including Final Exam) |
 | **Phase 4** | ✅ Complete (Cases 21-30, including Capstone) |
+| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) |
 
 ---
 
@@ -55,6 +56,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 28. **Case_028 (Phase 4, Hybrid Identity — Azure AD + On-Prem AD, 4-alert batch, ticket-only):** A Kerberoasting indicator (RC4-downgraded TGS request burst) is decisive from rate and encryption-choice alone, without needing a confirmed cracked credential (same evidentiary class as Case_019's DNS TXT flood and Case_023's IAM enumeration burst). The critical insight of this case: when a low-value account's suspicious activity is immediately followed by unusual activity on a *high-value bridge account* (the Azure AD Connect sync account connecting on-prem and cloud identity), the second event is the real severity driver — an unverified OAuth app receiving `Directory.ReadWrite.All` from that compromised bridge account represents a directory-wide, credential-reset-resistant backdoor, which is a categorically different and higher-priority remediation target than the initial Kerberoasting alone. Full chain correctly triaged as one incident spanning both on-prem and cloud in under 6 minutes of attacker activity. Zero corrections, 3-minute triage time — fastest in the repo.
 29. **Case_029 (Phase 4, AWS, 5-alert rapid-response queue, ticket-only, Capital One-grounded):** A single point of failure (an SSRF-vulnerable WAF with an overprivileged IAM role) can cascade into a full data breach without any additional vulnerabilities or privilege escalation being needed — the entire I-002/I-003/I-004 chain was possible purely because the compromised role's existing permissions were broader than its documented purpose required, the same root cause as the real-world breach this scenario is grounded in. Correctly distinguished a live, active-exploitation chain from a routine, pre-existing, already-ticketed compliance finding (I-005) sharing the same queue but a different role entirely — same discrimination skill as Case_025 (E-002) and Case_027 (G-004), now the third consecutive case to include a deliberate unrelated-alert test. Zero corrections, 4-minute rapid-response triage time for a 5-alert queue.
 30. **Case_030 (🏁 Phase 4 Capstone, Mixed Email + Cloud Identity + Endpoint, 7-alert queue with live interrupt, ticket-only, time pressure):** A full attack chain can span three previously-separate alert domains (email, cloud identity, endpoint) as one continuous incident, and the specific technique connecting two stages matters for the handoff, not just the fact that a stage occurred — naming "MFA fatigue / push bombing" (the real 2022 Uber technique) rather than just "MFA was satisfied" is the difference between a generic writeup and an actionable one for the next analyst. Correctly identified the fourth consecutive deliberate discrimination-test alert (J-006) despite time pressure and a live interrupt competing for attention in the same queue. Zero corrections across all 7 alerts, 3-minute total triage time for the full chain — matching the fastest pace in the repo despite this being the highest-alert-count single ticket outside the original Final Exam. Closes Phase 4 with a full shift-handoff deliverable, mirroring the structure established by Case_020.
+31. **Case_031 (Phase 5 opens, AWS — IAM role chaining, 2-alert batch, ticket-only):** A privilege-escalation path built on transitive trust (an intermediate role's own permissions, not the originating user's) is specifically dangerous because it's invisible to a review of the originating identity's direct policy alone — this is the defining risk of role chaining as a technique, distinct from a simple over-permissive grant. Correctly reasoned that the *result* of the exposure (RDP opened to the entire internet on a production database security group) is critical regardless of whether the underlying cause turns out to be a serious mistake or deliberate action, since the immediate risk to the organization is identical either way. Zero corrections, 2-minute triage time. Opens Phase 5's cloud-weighted expansion (Cases 31-50, targeting 150 total alerts across the full repo).
 
 ---
 
@@ -166,6 +168,24 @@ concealment (J-004) → lateral RDP movement (J-005) → active data staging for
 test). 0 corrections, 3-minute total triage time for the full 7-alert chain — matching the
 fastest pace in the repo. Closed with a full shift-handoff summary, mirroring Case_020's
 capstone structure and formally closing out Phase 4.
+
+---
+
+## Phase 5 Kickoff (Cases 31-50)
+
+Phase 5 expands to 20 more cases targeting 49 additional alerts, bringing the repo to 50 cases
+/ 150 alerts total. Deliberately weighted toward cloud and SaaS domains (AWS, Azure, GCP, Okta,
+CI/CD, Kubernetes) — roughly 15 of 20 cases — since cloud alert volume was comparatively
+underrepresented across Phases 1-4 relative to its real-world share of SOC alert queues.
+Real-breach-grounding continues per the Phase 4 methodology, citing sources in investigation.md.
+Verification method (ticket-only vs. Splunk) is decided per case as before. Phase 5 closes with
+a second capstone (Case_050) spanning multiple cloud domains plus endpoint in one mega chain.
+
+**Case_031** (AWS — IAM role chaining, 2-alert batch, ticket-only): TP (K-001, unauthorized
+privilege escalation via a misconfigured transitive AssumeRole trust) + TP (K-002, critical —
+RDP opened to the entire internet on a production database security group using the escalated
+session). 0 corrections, 2-minute triage time. Grounded in the well-documented AWS role-chaining
+escalation technique from cloud security research rather than a single named breach.
 
 ---
 
