@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–31 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–32 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 31 (103 individual alerts triaged) |
-| True Positives (TP) | 65 |
+| Total Cases Closed | 32 (105 individual alerts triaged) |
+| True Positives (TP) | 67 |
 | False Positives (FP) | 15 |
 | Ambiguous | 16 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain) | 36 |
-| Correct Final Verdicts | 103 / 103 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain) | 38 |
+| Correct Final Verdicts | 105 / 105 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -57,6 +57,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 29. **Case_029 (Phase 4, AWS, 5-alert rapid-response queue, ticket-only, Capital One-grounded):** A single point of failure (an SSRF-vulnerable WAF with an overprivileged IAM role) can cascade into a full data breach without any additional vulnerabilities or privilege escalation being needed — the entire I-002/I-003/I-004 chain was possible purely because the compromised role's existing permissions were broader than its documented purpose required, the same root cause as the real-world breach this scenario is grounded in. Correctly distinguished a live, active-exploitation chain from a routine, pre-existing, already-ticketed compliance finding (I-005) sharing the same queue but a different role entirely — same discrimination skill as Case_025 (E-002) and Case_027 (G-004), now the third consecutive case to include a deliberate unrelated-alert test. Zero corrections, 4-minute rapid-response triage time for a 5-alert queue.
 30. **Case_030 (🏁 Phase 4 Capstone, Mixed Email + Cloud Identity + Endpoint, 7-alert queue with live interrupt, ticket-only, time pressure):** A full attack chain can span three previously-separate alert domains (email, cloud identity, endpoint) as one continuous incident, and the specific technique connecting two stages matters for the handoff, not just the fact that a stage occurred — naming "MFA fatigue / push bombing" (the real 2022 Uber technique) rather than just "MFA was satisfied" is the difference between a generic writeup and an actionable one for the next analyst. Correctly identified the fourth consecutive deliberate discrimination-test alert (J-006) despite time pressure and a live interrupt competing for attention in the same queue. Zero corrections across all 7 alerts, 3-minute total triage time for the full chain — matching the fastest pace in the repo despite this being the highest-alert-count single ticket outside the original Final Exam. Closes Phase 4 with a full shift-handoff deliverable, mirroring the structure established by Case_020.
 31. **Case_031 (Phase 5 opens, AWS — IAM role chaining, 2-alert batch, ticket-only):** A privilege-escalation path built on transitive trust (an intermediate role's own permissions, not the originating user's) is specifically dangerous because it's invisible to a review of the originating identity's direct policy alone — this is the defining risk of role chaining as a technique, distinct from a simple over-permissive grant. Correctly reasoned that the *result* of the exposure (RDP opened to the entire internet on a production database security group) is critical regardless of whether the underlying cause turns out to be a serious mistake or deliberate action, since the immediate risk to the organization is identical either way. Zero corrections, 2-minute triage time. Opens Phase 5's cloud-weighted expansion (Cases 31-50, targeting 150 total alerts across the full repo).
+32. **Case_032 (Phase 5, Azure AD — Conditional Access bypass via privilege misuse, 2-alert batch, ticket-only):** An unexplained privilege grant (Global Administrator on a standard Marketing account, no documented justification) is itself a red flag that should be caught independent of anything that happens afterward — the access-review process failure is a root cause worth escalating on its own, not just a footnote to the account takeover it enabled. Recognized that a self-service action using improper privilege to weaken one's own security controls (self-adding to an MFA/CA-bypass group) is a fundamentally different and more direct risk pattern than an admin action performed on behalf of the organization. Zero corrections, 4-minute triage time.
 
 ---
 
@@ -186,6 +187,13 @@ privilege escalation via a misconfigured transitive AssumeRole trust) + TP (K-00
 RDP opened to the entire internet on a production database security group using the escalated
 session). 0 corrections, 2-minute triage time. Grounded in the well-documented AWS role-chaining
 escalation technique from cloud security research rather than a single named breach.
+
+**Case_032** (Azure AD — Conditional Access bypass, 2-alert batch, ticket-only): TP (L-001, an
+unexplained Global Administrator grant on a standard Marketing account used to self-add to a
+service-account-only MFA/CA-bypass group) + TP (L-002, resulting legacy-protocol sign-in with no
+MFA from a never-before-seen external IP). 0 corrections, 4-minute triage time. Notable for
+identifying the unexplained privilege grant itself as a root-cause access-review failure worth
+escalating independently, not just as context for the takeover it enabled.
 
 ---
 
