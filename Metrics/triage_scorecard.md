@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–32 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–34 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 32 (105 individual alerts triaged) |
-| True Positives (TP) | 67 |
+| Total Cases Closed | 34 (110 individual alerts triaged) |
+| True Positives (TP) | 72 |
 | False Positives (FP) | 15 |
 | Ambiguous | 16 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain) | 38 |
-| Correct Final Verdicts | 105 / 105 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain) | 43 |
+| Correct Final Verdicts | 110 / 110 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -58,6 +58,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 30. **Case_030 (🏁 Phase 4 Capstone, Mixed Email + Cloud Identity + Endpoint, 7-alert queue with live interrupt, ticket-only, time pressure):** A full attack chain can span three previously-separate alert domains (email, cloud identity, endpoint) as one continuous incident, and the specific technique connecting two stages matters for the handoff, not just the fact that a stage occurred — naming "MFA fatigue / push bombing" (the real 2022 Uber technique) rather than just "MFA was satisfied" is the difference between a generic writeup and an actionable one for the next analyst. Correctly identified the fourth consecutive deliberate discrimination-test alert (J-006) despite time pressure and a live interrupt competing for attention in the same queue. Zero corrections across all 7 alerts, 3-minute total triage time for the full chain — matching the fastest pace in the repo despite this being the highest-alert-count single ticket outside the original Final Exam. Closes Phase 4 with a full shift-handoff deliverable, mirroring the structure established by Case_020.
 31. **Case_031 (Phase 5 opens, AWS — IAM role chaining, 2-alert batch, ticket-only):** A privilege-escalation path built on transitive trust (an intermediate role's own permissions, not the originating user's) is specifically dangerous because it's invisible to a review of the originating identity's direct policy alone — this is the defining risk of role chaining as a technique, distinct from a simple over-permissive grant. Correctly reasoned that the *result* of the exposure (RDP opened to the entire internet on a production database security group) is critical regardless of whether the underlying cause turns out to be a serious mistake or deliberate action, since the immediate risk to the organization is identical either way. Zero corrections, 2-minute triage time. Opens Phase 5's cloud-weighted expansion (Cases 31-50, targeting 150 total alerts across the full repo).
 32. **Case_032 (Phase 5, Azure AD — Conditional Access bypass via privilege misuse, 2-alert batch, ticket-only):** An unexplained privilege grant (Global Administrator on a standard Marketing account, no documented justification) is itself a red flag that should be caught independent of anything that happens afterward — the access-review process failure is a root cause worth escalating on its own, not just a footnote to the account takeover it enabled. Recognized that a self-service action using improper privilege to weaken one's own security controls (self-adding to an MFA/CA-bypass group) is a fundamentally different and more direct risk pattern than an admin action performed on behalf of the organization. Zero corrections, 4-minute triage time.
+33. **Case_033 (Phase 5, GCP — service account key exfiltration, 2-alert batch, Splunk-verified, first GCP case in the repo):** Comparing a suspicious action directly against a confirmed-legitimate baseline in the same dataset (k.solanki's undocumented key creations vs. r.desai's change-ticket-backed ones) sharpens a "this seems unusual" judgment into a concrete, evidenced finding — the same discipline as checking Noise-Baselines before ruling on endpoint alerts in Phases 1-3, now applied to cloud IAM actions. Correctly required actual Splunk query output before accepting a verdict, holding the line on the repo's evidence-based methodology even under a fast "both TP" answer with no supporting screenshot initially provided. Zero corrections once verified, 4-minute triage time.
+34. **Case_034 (Phase 5, Okta/SaaS third-party support access, 3-alert batch, ticket-only, Okta/Sitel 2022-grounded):** A compromised third-party support account's blast radius is defined by *scope*, not just volume — 14 password resets is concerning on its own, but the decisive detail is that they spread across 6 different customer tenants rather than staying within the engineer's single assigned tenant, mirroring the real Okta/Sitel incident's core risk (why hundreds of customers were initially flagged as potentially affected from compromise of one shared-service account). Correctly identified both the volume deviation and the scope deviation as separate, compounding factors rather than treating the alert as a single undifferentiated anomaly. Zero corrections, 3-minute triage time.
 
 ---
 
@@ -194,6 +196,23 @@ service-account-only MFA/CA-bypass group) + TP (L-002, resulting legacy-protocol
 MFA from a never-before-seen external IP). 0 corrections, 4-minute triage time. Notable for
 identifying the unexplained privilege grant itself as a root-cause access-review failure worth
 escalating independently, not just as context for the takeover it enabled.
+
+**Case_033** (GCP — service account key exfiltration, 2-alert batch, Splunk-verified, first GCP
+case in the repo): TP (M-001, an undocumented service account key created by a Support Analyst
+with zero prior key-management history, no matching change ticket) + TP (M-002, critical — that
+key used 21 minutes later from a never-before-seen external location to retrieve 8.2GB of
+customer data). 0 corrections, 4-minute triage time. Investigation directly compared the
+suspicious actor's activity against a confirmed-legitimate baseline present in the same dataset
+to sharpen the finding from "seems unusual" to a concrete, evidenced conclusion.
+
+**Case_034** (Okta/SaaS third-party support access, 3-alert batch, ticket-only): adapted from
+the January 2022 Okta/Sitel breach (Lapsus$) — RDP access to a support engineer's laptop leading
+to SuperUser-tier account abuse. TP (N-001, external RDP to a privileged support host) + TP
+(N-002, new MFA factor added as a persistence mechanism during the suspicious session) + TP
+(N-003, critical — 14 password resets across 6 different customer tenants in 25 minutes, vs. a
+baseline of 2-3/day within one assigned tenant). 0 corrections, 3-minute triage time. Correctly
+distinguished the volume deviation from the more critical scope deviation (multi-tenant spread)
+as the decisive factor mirroring the real incident's blast-radius concern.
 
 ---
 
