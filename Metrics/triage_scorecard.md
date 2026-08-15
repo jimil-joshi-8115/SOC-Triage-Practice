@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–34 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–35 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 34 (110 individual alerts triaged) |
-| True Positives (TP) | 72 |
-| False Positives (FP) | 15 |
-| Ambiguous | 16 |
+| Total Cases Closed | 35 (113 individual alerts triaged) |
+| True Positives (TP) | 73 |
+| False Positives (FP) | 16 |
+| Ambiguous | 17 |
 | Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain) | 43 |
-| Correct Final Verdicts | 110 / 110 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min |
+| Correct Final Verdicts | 113 / 113 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -60,6 +60,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 32. **Case_032 (Phase 5, Azure AD — Conditional Access bypass via privilege misuse, 2-alert batch, ticket-only):** An unexplained privilege grant (Global Administrator on a standard Marketing account, no documented justification) is itself a red flag that should be caught independent of anything that happens afterward — the access-review process failure is a root cause worth escalating on its own, not just a footnote to the account takeover it enabled. Recognized that a self-service action using improper privilege to weaken one's own security controls (self-adding to an MFA/CA-bypass group) is a fundamentally different and more direct risk pattern than an admin action performed on behalf of the organization. Zero corrections, 4-minute triage time.
 33. **Case_033 (Phase 5, GCP — service account key exfiltration, 2-alert batch, Splunk-verified, first GCP case in the repo):** Comparing a suspicious action directly against a confirmed-legitimate baseline in the same dataset (k.solanki's undocumented key creations vs. r.desai's change-ticket-backed ones) sharpens a "this seems unusual" judgment into a concrete, evidenced finding — the same discipline as checking Noise-Baselines before ruling on endpoint alerts in Phases 1-3, now applied to cloud IAM actions. Correctly required actual Splunk query output before accepting a verdict, holding the line on the repo's evidence-based methodology even under a fast "both TP" answer with no supporting screenshot initially provided. Zero corrections once verified, 4-minute triage time.
 34. **Case_034 (Phase 5, Okta/SaaS third-party support access, 3-alert batch, ticket-only, Okta/Sitel 2022-grounded):** A compromised third-party support account's blast radius is defined by *scope*, not just volume — 14 password resets is concerning on its own, but the decisive detail is that they spread across 6 different customer tenants rather than staying within the engineer's single assigned tenant, mirroring the real Okta/Sitel incident's core risk (why hundreds of customers were initially flagged as potentially affected from compromise of one shared-service account). Correctly identified both the volume deviation and the scope deviation as separate, compounding factors rather than treating the alert as a single undifferentiated anomaly. Zero corrections, 3-minute triage time.
+35. **Case_035 (Phase 5, Insider Threat, 3-alert batch, ticket-only, three unrelated employees, first case explicitly mixing all three verdict types after four consecutive all-TP cases):** Volume alone is not the deciding factor for insider-threat alerts — content and ownership matter more: 1,847 files of client/pricing/competitive data is TP, while 3 files of an employee's own HR-issued personal records is a fundamentally different risk category despite both being "unusual data movement" on the surface. Correctly resisted forcing a borderline case into a clean FP or TP bucket — Ambiguous, with a specific policy-violation note and a concrete verification step (confirm employment status), was the evidence-appropriate call when ownership/content argued one way but data-handling policy still technically applied. Reinforces a deliberate return to genuine TP/FP/Ambiguous variety after Cases 031-034 drifted into an unintentional all-TP streak — flagged directly by the analyst and corrected going forward as explicit repo methodology.
 
 ---
 
@@ -213,6 +214,20 @@ to SuperUser-tier account abuse. TP (N-001, external RDP to a privileged support
 baseline of 2-3/day within one assigned tenant). 0 corrections, 3-minute triage time. Correctly
 distinguished the volume deviation from the more critical scope deviation (multi-tenant spread)
 as the decisive factor mirroring the real incident's blast-radius concern.
+
+**Methodology note:** Cases 031-034 were unintentionally all-TP, a drift away from the
+discrimination-testing variety established in Cases 025-030. Flagged by the analyst and
+corrected explicitly going forward — every case from Case_035 onward deliberately mixes
+TP/FP/Ambiguous outcomes rather than defaulting to confirmed-compromise chains.
+
+**Case_035** (Insider Threat, 3-alert batch, ticket-only, three unrelated employees): TP
+(O-001, pre-resignation mass exfiltration of client/pricing/competitive data to USB, off-hours)
++ Ambiguous (O-002, small volume of an employee's own personal HR documents sent to their own
+email — content/ownership argue against malice, but the personal-email transmission is still a
+policy consideration with no resignation context available either way) + FP (O-003, IT admin's
+documented, scheduled, standing-access routine backup/DR verification). 0 corrections, 3-minute
+triage time. First case since the methodology note above to genuinely span all three verdict
+categories in one ticket.
 
 ---
 
