@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–35 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–37 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 35 (113 individual alerts triaged) |
-| True Positives (TP) | 73 |
-| False Positives (FP) | 16 |
+| Total Cases Closed | 37 (119 individual alerts triaged) |
+| True Positives (TP) | 77 |
+| False Positives (FP) | 18 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain) | 43 |
-| Correct Final Verdicts | 113 / 113 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain) | 47 |
+| Correct Final Verdicts | 119 / 119 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -61,6 +61,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 33. **Case_033 (Phase 5, GCP — service account key exfiltration, 2-alert batch, Splunk-verified, first GCP case in the repo):** Comparing a suspicious action directly against a confirmed-legitimate baseline in the same dataset (k.solanki's undocumented key creations vs. r.desai's change-ticket-backed ones) sharpens a "this seems unusual" judgment into a concrete, evidenced finding — the same discipline as checking Noise-Baselines before ruling on endpoint alerts in Phases 1-3, now applied to cloud IAM actions. Correctly required actual Splunk query output before accepting a verdict, holding the line on the repo's evidence-based methodology even under a fast "both TP" answer with no supporting screenshot initially provided. Zero corrections once verified, 4-minute triage time.
 34. **Case_034 (Phase 5, Okta/SaaS third-party support access, 3-alert batch, ticket-only, Okta/Sitel 2022-grounded):** A compromised third-party support account's blast radius is defined by *scope*, not just volume — 14 password resets is concerning on its own, but the decisive detail is that they spread across 6 different customer tenants rather than staying within the engineer's single assigned tenant, mirroring the real Okta/Sitel incident's core risk (why hundreds of customers were initially flagged as potentially affected from compromise of one shared-service account). Correctly identified both the volume deviation and the scope deviation as separate, compounding factors rather than treating the alert as a single undifferentiated anomaly. Zero corrections, 3-minute triage time.
 35. **Case_035 (Phase 5, Insider Threat, 3-alert batch, ticket-only, three unrelated employees, first case explicitly mixing all three verdict types after four consecutive all-TP cases):** Volume alone is not the deciding factor for insider-threat alerts — content and ownership matter more: 1,847 files of client/pricing/competitive data is TP, while 3 files of an employee's own HR-issued personal records is a fundamentally different risk category despite both being "unusual data movement" on the surface. Correctly resisted forcing a borderline case into a clean FP or TP bucket — Ambiguous, with a specific policy-violation note and a concrete verification step (confirm employment status), was the evidence-appropriate call when ownership/content argued one way but data-handling policy still technically applied. Reinforces a deliberate return to genuine TP/FP/Ambiguous variety after Cases 031-034 drifted into an unintentional all-TP streak — flagged directly by the analyst and corrected going forward as explicit repo methodology.
+36. **Case_036 (Phase 5, Kubernetes — exposed dashboard cryptojacking, 3-alert batch, ticket-only, Tesla 2018-grounded):** A pre-existing, already-ticketed, non-urgent finding does not stay non-urgent forever — its risk status must be re-evaluated the moment new evidence shows active exploitation, which is the opposite lesson from Case_029's I-005 (a pre-existing finding that stayed correctly de-prioritized because it had no such correlation). The distinguishing factor between "leave it on the existing remediation timeline" and "escalate immediately" is not the finding's age or ticket status, but whether it's now connected to live, confirmed attacker activity. Correctly recognized a specific, named evasion technique (deliberately low resource throttling to avoid detection) as a decisive indicator rather than just "resource usage was a bit odd." Zero corrections, 3-minute triage time.
+37. **Case_037 (Phase 5, CI/CD pipeline compromise, 3-alert batch, Splunk-verified, CircleCI 2023-grounded):** The decisive signal wasn't just location/timing anomalies on their own — it was a *session-type mismatch*: an interactive user session performing an action explicitly documented as automation-only (reading the production secrets context). This is a more precise version of "technique alone ≠ automatic TP" — here, the *action* was legitimate in the abstract (reading a context is routine), but the *actor type* performing it was the actual red flag, mirroring the real CircleCI breach where a compromised session token, not a novel exploit, was the entire attack vector. Zero corrections, 2-minute triage time.
 
 ---
 
@@ -228,6 +230,26 @@ policy consideration with no resignation context available either way) + FP (O-0
 documented, scheduled, standing-access routine backup/DR verification). 0 corrections, 3-minute
 triage time. First case since the methodology note above to genuinely span all three verdict
 categories in one ticket.
+
+**Case_036** (Kubernetes — exposed dashboard cryptojacking, 3-alert batch, ticket-only):
+adapted from the February 2018 Tesla breach (unauthenticated Kubernetes Dashboard exploited for
+cryptojacking with deliberate detection-evasion throttling). TP (P-001, re-escalated — a
+3-week-old, already-ticketed non-urgent finding, re-classified as urgent once confirmed
+exploited) + TP (P-002, critical — malicious pod deployed via the Dashboard UI with an unlisted
+image and deliberately throttled CPU matching the real incident's evasion technique) + FP
+(P-003, documented CI/CD service account activity tied to a traceable deployment record). 0
+corrections, 3-minute triage time. Directly contrasts with Case_029's I-005 to reinforce that a
+pre-existing finding's urgency depends on correlation with live activity, not its ticket age.
+
+**Case_037** (CI/CD pipeline compromise, 3-alert batch, Splunk-verified): adapted from the
+December 2022/January 2023 CircleCI breach (stolen 2FA-backed session token used to exfiltrate
+production environment variables, tokens, and keys). TP (Q-001, session token used from a
+never-before-seen location outside documented working hours) + TP (Q-002, critical — the same
+session reading and bulk-exporting the production secrets context, a resource explicitly
+documented as automation-only, never interactive) + FP (Q-003, fully automated, scheduled,
+change-ticket-backed token rotation). 0 corrections, 2-minute triage time. Notable for
+identifying a session-type mismatch (interactive vs. automated) as the decisive indicator,
+rather than the action itself being unusual.
 
 ---
 
