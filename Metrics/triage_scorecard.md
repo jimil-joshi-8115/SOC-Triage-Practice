@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–37 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–39 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 37 (119 individual alerts triaged) |
-| True Positives (TP) | 77 |
-| False Positives (FP) | 18 |
+| Total Cases Closed | 39 (125 individual alerts triaged) |
+| True Positives (TP) | 81 |
+| False Positives (FP) | 20 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain) | 47 |
-| Correct Final Verdicts | 119 / 119 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain) | 51 |
+| Correct Final Verdicts | 125 / 125 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -63,6 +63,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 35. **Case_035 (Phase 5, Insider Threat, 3-alert batch, ticket-only, three unrelated employees, first case explicitly mixing all three verdict types after four consecutive all-TP cases):** Volume alone is not the deciding factor for insider-threat alerts — content and ownership matter more: 1,847 files of client/pricing/competitive data is TP, while 3 files of an employee's own HR-issued personal records is a fundamentally different risk category despite both being "unusual data movement" on the surface. Correctly resisted forcing a borderline case into a clean FP or TP bucket — Ambiguous, with a specific policy-violation note and a concrete verification step (confirm employment status), was the evidence-appropriate call when ownership/content argued one way but data-handling policy still technically applied. Reinforces a deliberate return to genuine TP/FP/Ambiguous variety after Cases 031-034 drifted into an unintentional all-TP streak — flagged directly by the analyst and corrected going forward as explicit repo methodology.
 36. **Case_036 (Phase 5, Kubernetes — exposed dashboard cryptojacking, 3-alert batch, ticket-only, Tesla 2018-grounded):** A pre-existing, already-ticketed, non-urgent finding does not stay non-urgent forever — its risk status must be re-evaluated the moment new evidence shows active exploitation, which is the opposite lesson from Case_029's I-005 (a pre-existing finding that stayed correctly de-prioritized because it had no such correlation). The distinguishing factor between "leave it on the existing remediation timeline" and "escalate immediately" is not the finding's age or ticket status, but whether it's now connected to live, confirmed attacker activity. Correctly recognized a specific, named evasion technique (deliberately low resource throttling to avoid detection) as a decisive indicator rather than just "resource usage was a bit odd." Zero corrections, 3-minute triage time.
 37. **Case_037 (Phase 5, CI/CD pipeline compromise, 3-alert batch, Splunk-verified, CircleCI 2023-grounded):** The decisive signal wasn't just location/timing anomalies on their own — it was a *session-type mismatch*: an interactive user session performing an action explicitly documented as automation-only (reading the production secrets context). This is a more precise version of "technique alone ≠ automatic TP" — here, the *action* was legitimate in the abstract (reading a context is routine), but the *actor type* performing it was the actual red flag, mirroring the real CircleCI breach where a compromised session token, not a novel exploit, was the entire attack vector. Zero corrections, 2-minute triage time.
+38. **Case_038 (Phase 5, Azure Storage SAS token overexposure, 3-alert batch, ticket-only):** The same underlying mechanism (a SAS token) can be either a severe finding or a textbook example of proper practice depending entirely on configuration — R-001's account-wide Read+Write+Delete, ~2-year validity, undocumented, publicly-leaked token versus R-003's read-only, single-container, 7-day, fully-ticketed token are opposite ends of the same technology. Explicitly naming all three distinguishing factors (scope, expiration, documentation) rather than a vague "this one looks fine" strengthens the verdict into something auditable and teachable. Zero corrections, 3-minute triage time.
+39. **Case_039 (Phase 5, AWS EC2 credential exfiltration + crypto-mining, 3-alert batch, ticket-only):** Reinforces Case_016's "routine events with zero aggravating factors should be FP" principle — S-003's blocked SSH scan attempts, from an attributed benign scanning source, against a correctly-configured security control, is FP on every available detail, contrasted directly against S-001/S-002's confirmed, successful compromise on a different instance. Notable process lesson: a fast initial read under time pressure produced an unstable first-pass verdict (TP → Ambiguous) before a full re-read settled on the correct FP — logged transparently as what actually happened (a reading-speed issue, not a reasoning flaw) rather than smoothed into a false zero-corrections record, consistent with this repo's standing honesty methodology even when directly pushed to omit it.
 
 ---
 
@@ -250,6 +252,25 @@ documented as automation-only, never interactive) + FP (Q-003, fully automated, 
 change-ticket-backed token rotation). 0 corrections, 2-minute triage time. Notable for
 identifying a session-type mismatch (interactive vs. automated) as the decisive indicator,
 rather than the action itself being unusual.
+
+**Case_038** (Azure Storage — SAS token overexposure, 3-alert batch, ticket-only): TP (R-001,
+an account-wide Read+Write+Delete SAS token with ~2-year validity leaked in a public GitHub
+repo for 6 days) + TP (R-002, critical — the leaked token actively exploited immediately after
+discovery, 550 read/list operations across 8 containers including customer invoices and
+employee documents, versus the token's legitimate 2-3-PutBlob-per-booking baseline) + FP
+(R-003, a read-only, single-container, 7-day, fully-ticketed SAS token — the inverse
+configuration of R-001 in every dimension). 0 corrections, 3-minute triage time. Explicitly
+contrasts two SAS token events to demonstrate that verdict depends on configuration and
+documentation, not the underlying mechanism.
+
+**Case_039** (AWS EC2 credential exfiltration + crypto-mining, 3-alert batch, ticket-only):
+TP (S-001, DNS-rebinding attempt against an instance metadata service on a public-facing
+instance with a documented unpatched vulnerability) + TP (S-002, critical — confirmed outbound
+connection to a cryptocurrency mining pool 7 minutes later, same instance) + FP (S-003, blocked
+SSH scan attempts from an attributed benign scanning service, zero successful connections,
+unrelated internal instance). 1 correction — S-003's verdict moved through TP and Ambiguous
+across a fast initial read under time pressure before settling on the correct FP on full review;
+logged as a reading-speed issue rather than a reasoning error, per repo methodology.
 
 ---
 
