@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–39 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–40 (Phase 5 Halfway Checkpoint)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,19 +8,19 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 39 (125 individual alerts triaged) |
-| True Positives (TP) | 81 |
-| False Positives (FP) | 20 |
+| Total Cases Closed | 40 (130 individual alerts triaged) |
+| True Positives (TP) | 83 |
+| False Positives (FP) | 23 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain) | 51 |
-| Correct Final Verdicts | 125 / 125 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain) | 53 |
+| Correct Final Verdicts | 130 / 130 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
 | **Phase 3** | ✅ Complete (Cases 15-20, including Final Exam) |
 | **Phase 4** | ✅ Complete (Cases 21-30, including Capstone) |
-| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) |
+| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) — Case_040 checkpoint reached, 10 cases remain |
 
 ---
 
@@ -65,6 +65,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 37. **Case_037 (Phase 5, CI/CD pipeline compromise, 3-alert batch, Splunk-verified, CircleCI 2023-grounded):** The decisive signal wasn't just location/timing anomalies on their own — it was a *session-type mismatch*: an interactive user session performing an action explicitly documented as automation-only (reading the production secrets context). This is a more precise version of "technique alone ≠ automatic TP" — here, the *action* was legitimate in the abstract (reading a context is routine), but the *actor type* performing it was the actual red flag, mirroring the real CircleCI breach where a compromised session token, not a novel exploit, was the entire attack vector. Zero corrections, 2-minute triage time.
 38. **Case_038 (Phase 5, Azure Storage SAS token overexposure, 3-alert batch, ticket-only):** The same underlying mechanism (a SAS token) can be either a severe finding or a textbook example of proper practice depending entirely on configuration — R-001's account-wide Read+Write+Delete, ~2-year validity, undocumented, publicly-leaked token versus R-003's read-only, single-container, 7-day, fully-ticketed token are opposite ends of the same technology. Explicitly naming all three distinguishing factors (scope, expiration, documentation) rather than a vague "this one looks fine" strengthens the verdict into something auditable and teachable. Zero corrections, 3-minute triage time.
 39. **Case_039 (Phase 5, AWS EC2 credential exfiltration + crypto-mining, 3-alert batch, ticket-only):** Reinforces Case_016's "routine events with zero aggravating factors should be FP" principle — S-003's blocked SSH scan attempts, from an attributed benign scanning source, against a correctly-configured security control, is FP on every available detail, contrasted directly against S-001/S-002's confirmed, successful compromise on a different instance. Notable process lesson: a fast initial read under time pressure produced an unstable first-pass verdict (TP → Ambiguous) before a full re-read settled on the correct FP — logged transparently as what actually happened (a reading-speed issue, not a reasoning flaw) rather than smoothed into a false zero-corrections record, consistent with this repo's standing honesty methodology even when directly pushed to omit it.
+40. **Case_040 (Phase 5 Halfway Checkpoint, Mixed Cloud queue — Azure AD + AWS + GCP + Okta, 5-alert batch with live interrupt, ticket-only):** Established a precise, reusable distinction between "confirmed FP" and "genuinely Ambiguous": a real deviation from baseline paired with *direct, specific, dated confirming evidence* (a calendar entry matching the exact activity) is FP, not Ambiguous — Ambiguous is reserved for cases where the only available evidence is an *absence* of confirmation (as in Case_026's F-003), not a deviation that already has a positive explanation attached. Applied this distinction correctly to T-001 on the first pass and self-corrected T-003 from an initial Ambiguous to FP once the same standard was applied consistently. Confirmed, for the third time in the repo (after Case_025, Case_030), that a live interrupt (T-005) immediately reprioritizes response over continuing to process the remaining queue in order. 1 correction, 6-minute triage time for the full 5-alert checkpoint case.
 
 ---
 
@@ -179,6 +180,31 @@ capstone structure and formally closing out Phase 4.
 
 ---
 
+## Phase 5 Halfway Checkpoint (Cases 031-040)
+
+**Structure:** 10 cases (031-040) spanning AWS, Azure, GCP, Okta/SaaS, Kubernetes, and CI/CD
+domains, deliberately cloud-weighted per the analyst's request, mostly ticket-only with two
+Splunk-verified cases (033, 037), one live-interrupt checkpoint case (040) closing this half of
+the phase. Following Cases 031-034's unintentional all-TP drift (self-identified by the analyst
+and corrected), Cases 035-040 consistently mix TP/FP/Ambiguous outcomes.
+
+**Result:** 27 individually-triaged alerts across Cases 031-040, all correct final verdicts. 2
+corrections logged: Case_039's S-003 (a fast, incomplete initial read under time pressure that
+produced an unstable TP → Ambiguous → FP sequence before settling correctly) and Case_040's
+T-003 (an initial Ambiguous corrected to FP once compared consistently against T-001's
+evidentiary standard). Both corrections were self-caught during investigation rather than
+missed entirely, and both were logged transparently per the repo's standing methodology.
+
+**What this proved:** the core investigative judgment built across Phases 1-4 continues to
+transfer cleanly into cloud-native domains not previously covered in this repo (GCP, Kubernetes,
+CI/CD pipelines, SAS token governance) — the same underlying principles (technique alone ≠
+automatic TP, confirmed correlation vs. assumed correlation, positive confirming evidence vs.
+mere absence of red flags) recur in each new domain with only the surface details changing. The
+Case_040 checkpoint reinforced that live-interrupt discipline (established in Case_025 and
+Case_030) is now a consistently-applied skill rather than a one-off response to a novel format.
+
+---
+
 ## Phase 5 Kickoff (Cases 31-50)
 
 Phase 5 expands to 20 more cases targeting 49 additional alerts, bringing the repo to 50 cases
@@ -271,6 +297,18 @@ SSH scan attempts from an attributed benign scanning service, zero successful co
 unrelated internal instance). 1 correction — S-003's verdict moved through TP and Ambiguous
 across a fast initial read under time pressure before settling on the correct FP on full review;
 logged as a reading-speed issue rather than a reasoning error, per repo methodology.
+
+**Case_040 — Phase 5 Halfway Checkpoint** (Mixed Cloud queue — Azure AD + AWS + GCP + Okta,
+5-alert batch with live interrupt, ticket-only): FP (T-001, sign-in with a specific dated
+calendar entry confirming the trip) + TP (T-002, unauthorized self-attached S3FullAccess policy,
+no documented justification) + FP (T-003, query volume spike with a specific dated calendar
+entry confirming the activity — corrected from an initial Ambiguous) + FP (T-004, documented
+automated onboarding workflow) + TP (T-005, critical, live interrupt — confirmed exfiltration
+of guest PII and financial data using T-002's unauthorized access). 1 correction, 6-minute
+triage time. Established a reusable rule distinguishing confirmed-FP (deviation + positive
+confirming evidence) from genuine Ambiguous (deviation + absence of confirming evidence either
+way), directly correcting an inconsistent first-pass application of that standard within the
+same case.
 
 ---
 
