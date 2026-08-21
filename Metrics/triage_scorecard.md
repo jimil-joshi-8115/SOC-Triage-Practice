@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–40 (Phase 5 Halfway Checkpoint)
+# 📊 Triage Scorecard — Cases 1–42 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,19 +8,19 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 40 (130 individual alerts triaged) |
-| True Positives (TP) | 83 |
-| False Positives (FP) | 23 |
+| Total Cases Closed | 42 (136 individual alerts triaged) |
+| True Positives (TP) | 87 |
+| False Positives (FP) | 25 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain) | 53 |
-| Correct Final Verdicts | 130 / 130 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain + Case_041 chain + Case_042 chain) | 57 |
+| Correct Final Verdicts | 136 / 136 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min; Case_041 3-alert batch: 3 min; Case_042 3-alert batch: 2.3 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
 | **Phase 3** | ✅ Complete (Cases 15-20, including Final Exam) |
 | **Phase 4** | ✅ Complete (Cases 21-30, including Capstone) |
-| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) — Case_040 checkpoint reached, 10 cases remain |
+| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) |
 
 ---
 
@@ -66,6 +66,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 38. **Case_038 (Phase 5, Azure Storage SAS token overexposure, 3-alert batch, ticket-only):** The same underlying mechanism (a SAS token) can be either a severe finding or a textbook example of proper practice depending entirely on configuration — R-001's account-wide Read+Write+Delete, ~2-year validity, undocumented, publicly-leaked token versus R-003's read-only, single-container, 7-day, fully-ticketed token are opposite ends of the same technology. Explicitly naming all three distinguishing factors (scope, expiration, documentation) rather than a vague "this one looks fine" strengthens the verdict into something auditable and teachable. Zero corrections, 3-minute triage time.
 39. **Case_039 (Phase 5, AWS EC2 credential exfiltration + crypto-mining, 3-alert batch, ticket-only):** Reinforces Case_016's "routine events with zero aggravating factors should be FP" principle — S-003's blocked SSH scan attempts, from an attributed benign scanning source, against a correctly-configured security control, is FP on every available detail, contrasted directly against S-001/S-002's confirmed, successful compromise on a different instance. Notable process lesson: a fast initial read under time pressure produced an unstable first-pass verdict (TP → Ambiguous) before a full re-read settled on the correct FP — logged transparently as what actually happened (a reading-speed issue, not a reasoning flaw) rather than smoothed into a false zero-corrections record, consistent with this repo's standing honesty methodology even when directly pushed to omit it.
 40. **Case_040 (Phase 5 Halfway Checkpoint, Mixed Cloud queue — Azure AD + AWS + GCP + Okta, 5-alert batch with live interrupt, ticket-only):** Established a precise, reusable distinction between "confirmed FP" and "genuinely Ambiguous": a real deviation from baseline paired with *direct, specific, dated confirming evidence* (a calendar entry matching the exact activity) is FP, not Ambiguous — Ambiguous is reserved for cases where the only available evidence is an *absence* of confirmation (as in Case_026's F-003), not a deviation that already has a positive explanation attached. Applied this distinction correctly to T-001 on the first pass and self-corrected T-003 from an initial Ambiguous to FP once the same standard was applied consistently. Confirmed, for the third time in the repo (after Case_025, Case_030), that a live interrupt (T-005) immediately reprioritizes response over continuing to process the remaining queue in order. 1 correction, 6-minute triage time for the full 5-alert checkpoint case.
+41. **Case_041 (Phase 5, Supply Chain / Trojanized Update, 3-alert batch, ticket-only, SolarWinds 2020-grounded):** A genuinely new pattern for this repo — a verdict that cannot be resolved from an alert's own contents at all, only established retroactively once a later alert confirms compromise. U-001 (a validly-signed, hash-clean vendor update) had zero available indicators of malice at the time it fired; its TP status exists only because U-002's beaconing, correlated by a precisely-matching 14-day dormancy window, later proved it was the delivery vector. This is distinct from every prior "technique alone ≠ automatic TP" lesson in the repo, which involved alerts with *some* available suspicious indicator being weighed against context — here there was no indicator to weigh until the second alert arrived. Zero corrections, 3-minute triage time.
+42. **Case_042 (Phase 5, Azure AD — Conditional Access exclusion abuse for persistence, 3-alert batch, ticket-only):** Distinguished persistence at the *security-policy level* from persistence at the individual-account level for the first time in this repo — modifying a trusted-location exemption doesn't just enable one attacker's login, it silently weakens MFA enforcement for *every* account signing in from that IP going forward, meaning remediation must target the policy modification itself, not just the compromised account, since resetting the account alone would leave the tenant-wide exposure in place. W-003 served as a clean contrast case, showing the identical action type (modifying a trusted location) is either severe or routine purely based on actor legitimacy and documentation — reinforcing Case_038's lesson that mechanism alone never determines verdict. Zero corrections, 2.3-minute triage time.
 
 ---
 
@@ -309,6 +311,26 @@ triage time. Established a reusable rule distinguishing confirmed-FP (deviation 
 confirming evidence) from genuine Ambiguous (deviation + absence of confirming evidence either
 way), directly correcting an inconsistent first-pass application of that standard within the
 same case.
+
+**Case_041** (Supply Chain / Trojanized Update, 3-alert batch, ticket-only): adapted from the
+2020 SolarWinds/SUNBURST attack (trojanized, validly-signed vendor update delivering a backdoor
+with a ~14-day dormancy period before DGA-pattern DNS beaconing). TP (U-001, established
+retroactively — a validly-signed, hash-clean update with zero available indicators of
+compromise at the time it fired) + TP (U-002, critical — DGA-consistent beaconing exactly 14
+days later, the precise dormancy window matching the real-world malware) + FP (U-003, routine
+Defender definition update from an unrelated vendor). 0 corrections, 3-minute triage time. First
+case in the repo where a verdict could not be resolved from an alert's own contents at all,
+only established after a later, correlated alert confirmed compromise.
+
+**Case_042** (Azure AD — Conditional Access exclusion abuse for persistence, 3-alert batch,
+ticket-only): TP (W-001, a Marketing account with no security function modifying an org-wide
+MFA-exempt trusted location to add an unrelated external IP, no change ticket) + TP (W-002,
+critical — immediate exploitation, sign-in from the newly-trusted IP with no MFA prompt) + FP
+(W-003, the identical action type performed by the appropriate IT role, fully ticketed and
+ISP-confirmed for a legitimate new office). 0 corrections, 2.3-minute triage time. First case
+to distinguish persistence at the tenant security-policy level from persistence at the
+individual-account level — remediation required removing the trusted-location entry itself, not
+just resetting the compromised account.
 
 ---
 
