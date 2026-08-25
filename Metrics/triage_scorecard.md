@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–44 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–45 (Phase 5 In Progress)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,13 +8,13 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 44 (142 individual alerts triaged) |
-| True Positives (TP) | 91 |
-| False Positives (FP) | 27 |
+| Total Cases Closed | 45 (145 individual alerts triaged) |
+| True Positives (TP) | 93 |
+| False Positives (FP) | 28 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain + Case_041 chain + Case_042 chain + Case_043 chain + Case_044 chain) | 61 |
-| Correct Final Verdicts | 142 / 142 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min; Case_041 3-alert batch: 3 min; Case_042 3-alert batch: 2.3 min; Case_043 3-alert batch: 5 min; Case_044 3-alert batch: 3 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain + Case_041 chain + Case_042 chain + Case_043 chain + Case_044 chain + Case_045 chain) | 63 |
+| Correct Final Verdicts | 145 / 145 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min; Case_041 3-alert batch: 3 min; Case_042 3-alert batch: 2.3 min; Case_043 3-alert batch: 5 min; Case_044 3-alert batch: 3 min; Case_045 3-alert batch: 4 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
@@ -70,6 +70,7 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 42. **Case_042 (Phase 5, Azure AD — Conditional Access exclusion abuse for persistence, 3-alert batch, ticket-only):** Distinguished persistence at the *security-policy level* from persistence at the individual-account level for the first time in this repo — modifying a trusted-location exemption doesn't just enable one attacker's login, it silently weakens MFA enforcement for *every* account signing in from that IP going forward, meaning remediation must target the policy modification itself, not just the compromised account, since resetting the account alone would leave the tenant-wide exposure in place. W-003 served as a clean contrast case, showing the identical action type (modifying a trusted location) is either severe or routine purely based on actor legitimacy and documentation — reinforcing Case_038's lesson that mechanism alone never determines verdict. Zero corrections, 2.3-minute triage time.
 43. **Case_043 (Phase 5, AWS S3 SSE-C ransomware, 3-alert batch, Splunk-verified, Codefinger 2025-grounded):** A stale, unrotated credential belonging to departed personnel is itself a standing risk independent of any specific incident — the 14-month-unrotated key was the entire enabling factor for this attack, reinforcing that credential lifecycle hygiene (not just detection) is a first-order control. Learned a cloud-native ransomware pattern distinct from every prior encryption-based incident in the repo: rather than deploying malware, the attacker weaponized a *legitimate AWS encryption feature* (SSE-C) against its own victim, making the encryption itself technically "correct" AWS behavior — the malicious intent lives entirely in the credential compromise and the deviation from the bucket's 2-year encryption-mode history, not in the encryption mechanism itself. Zero corrections, 5-minute triage time.
 44. **Case_044 (Phase 5, Cloud database misconfiguration, 3-alert batch, ticket-only):** An internal inventory label ("dev/test") is a classification, not a technical control, and does not change a verdict when the actual technical facts (no authentication, confirmed real customer data) independently justify the same severity regardless of label — if anything, unprotected dev/test environments carry elevated real-world risk precisely because they routinely receive less security scrutiny than labeled-production systems. Recognized a well-documented, recurring real-world attack pattern (mass automated scanning for exposed databases, followed by "database ransom" data destruction) purely from its structural signature (rapid multi-IP connections, collection replaced with a ransom note) without needing a single named breach to ground it in. Zero corrections, 3-minute triage time.
+45. **Case_045 (Phase 5, AI voice/video-clone-assisted BEC, 3-alert batch, ticket-only, Arup 2024-grounded):** First case in the repo explicitly involving AI-generated social engineering rather than a technical exploit — no systems were compromised in either the scenario or the real incident it's grounded in; the entire attack succeeded by defeating a *human verification process* with synthetic media. Correctly named the precise control that failed: not "the employee was deceived" (deception is the premise of social engineering and doesn't itself indicate a process failure), but that a video call was substituted for the mandatory independent second-officer approval (segregation of duties) — the exact mechanism that let the real Arup fraud override an employee's own correct initial suspicion. Zero corrections, 4-minute triage time.
 
 ---
 
@@ -353,6 +354,17 @@ scanning followed by data destruction and a ransom note, confirming active explo
 0 corrections, 3-minute triage time. Explicitly addressed whether an inventory label should
 soften a verdict — concluded it should not, since the label carries no technical weight against
 confirmed exposure and real data.
+
+**Case_045** (AI voice/video-clone-assisted BEC, 3-alert batch, ticket-only): adapted from the
+January 2024 Arup deepfake fraud (~$25.6M lost via a spoofed-CFO email followed by a real-time
+deepfake video call impersonating the CFO and colleagues, no systems compromised). TP (Y-001, a
+spoofed-domain phishing email with an Arup-style confidentiality/urgency pretext, correctly
+flagged but not acted on by the recipient) + TP (Y-002, critical — $2.1M authorized to 4
+newly-added, unverified payee accounts on the sole basis of a video call, bypassing the mandatory
+dual-approval policy) + FP (Y-003, a routine payment in full compliance with the same
+dual-approval policy Y-002 bypassed). 0 corrections, 4-minute triage time. First case involving
+AI-generated social engineering with no technical compromise — precisely identified segregation
+of duties, not "the employee was fooled," as the actual control failure.
 
 ---
 
