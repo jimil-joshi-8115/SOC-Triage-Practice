@@ -1,4 +1,4 @@
-# 📊 Triage Scorecard — Cases 1–45 (Phase 5 In Progress)
+# 📊 Triage Scorecard — Cases 1–47 (🎯 150-Alert Target Reached)
 
 Complete performance log across all closed cases in SOC-Triage-Practice.
 
@@ -8,19 +8,19 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 
 | Metric | Value |
 |---|---|
-| Total Cases Closed | 45 (145 individual alerts triaged) |
-| True Positives (TP) | 93 |
-| False Positives (FP) | 28 |
+| Total Cases Closed | 47 (150 individual alerts triaged — 🎯 target reached) |
+| True Positives (TP) | 96 |
+| False Positives (FP) | 30 |
 | Ambiguous | 17 |
-| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain + Case_041 chain + Case_042 chain + Case_043 chain + Case_044 chain + Case_045 chain) | 63 |
-| Correct Final Verdicts | 145 / 145 |
-| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min; Case_041 3-alert batch: 3 min; Case_042 3-alert batch: 2.3 min; Case_043 3-alert batch: 5 min; Case_044 3-alert batch: 3 min; Case_045 3-alert batch: 4 min |
+| Also part of same active-incident chain (Final Exam + Case_022 BEC + Case_023 AWS + Case_024 chain + Case_025 chain + Case_028 chain + Case_029 chain + Case_030 Capstone chain + Case_031 chain + Case_032 chain + Case_033 chain + Case_034 chain + Case_036 chain + Case_037 chain + Case_038 chain + Case_039 chain + Case_040 chain + Case_041 chain + Case_042 chain + Case_043 chain + Case_044 chain + Case_045 chain + Case_046 chain) | 65 |
+| Correct Final Verdicts | 150 / 150 |
+| Average Triage Time | ~2.5 minutes per alert (endpoint cases); Case_024 5-alert chain: 7 min; Case_025 6-alert chain w/ live interrupt: 7 min; Case_026 3-alert batch: 5 min; Case_027 4-alert batch: 8 min; Case_028 4-alert batch: 3 min; Case_029 5-alert rapid-response: 4 min; Case_030 Capstone, 7-alert chain w/ live interrupt: 3 min; Case_031 2-alert batch: 2 min; Case_032 2-alert batch: 4 min; Case_033 2-alert batch: 4 min; Case_034 3-alert batch: 3 min; Case_035 3-alert batch (3 distinct verdicts): 3 min; Case_036 3-alert batch: 3 min; Case_037 3-alert batch: 2 min; Case_038 3-alert batch: 3 min; Case_039 3-alert batch: 5 min; Case_040 5-alert mixed-cloud queue w/ live interrupt (checkpoint): 6 min; Case_041 3-alert batch: 3 min; Case_042 3-alert batch: 2.3 min; Case_043 3-alert batch: 5 min; Case_044 3-alert batch: 3 min; Case_045 3-alert batch: 4 min; Case_046 3-alert batch: 2 min; Case_047 2-alert batch: 3 min |
 | Most Common FP Pattern | rundll32.exe + PcaSvc.dll,PcaPatchSdbTask (Windows PCA) |
 | **Phase 1** | ✅ Complete (Cases 5-8) |
 | **Phase 2** | ✅ Complete (Cases 9-14) |
 | **Phase 3** | ✅ Complete (Cases 15-20, including Final Exam) |
 | **Phase 4** | ✅ Complete (Cases 21-30, including Capstone) |
-| **Phase 5** | 🔄 In Progress (Cases 31-50, cloud-weighted expansion — targeting 150 total alerts) |
+| **Phase 5** | ✅ **150-alert target reached at Case_047.** Cases 048-050 continue as bonus Final-Exam-style material (mixed alerts, live interrupts, shift handoff) — not counted toward the 150-alert total, per explicit agreement with the analyst. |
 
 ---
 
@@ -71,6 +71,8 @@ Complete performance log across all closed cases in SOC-Triage-Practice.
 43. **Case_043 (Phase 5, AWS S3 SSE-C ransomware, 3-alert batch, Splunk-verified, Codefinger 2025-grounded):** A stale, unrotated credential belonging to departed personnel is itself a standing risk independent of any specific incident — the 14-month-unrotated key was the entire enabling factor for this attack, reinforcing that credential lifecycle hygiene (not just detection) is a first-order control. Learned a cloud-native ransomware pattern distinct from every prior encryption-based incident in the repo: rather than deploying malware, the attacker weaponized a *legitimate AWS encryption feature* (SSE-C) against its own victim, making the encryption itself technically "correct" AWS behavior — the malicious intent lives entirely in the credential compromise and the deviation from the bucket's 2-year encryption-mode history, not in the encryption mechanism itself. Zero corrections, 5-minute triage time.
 44. **Case_044 (Phase 5, Cloud database misconfiguration, 3-alert batch, ticket-only):** An internal inventory label ("dev/test") is a classification, not a technical control, and does not change a verdict when the actual technical facts (no authentication, confirmed real customer data) independently justify the same severity regardless of label — if anything, unprotected dev/test environments carry elevated real-world risk precisely because they routinely receive less security scrutiny than labeled-production systems. Recognized a well-documented, recurring real-world attack pattern (mass automated scanning for exposed databases, followed by "database ransom" data destruction) purely from its structural signature (rapid multi-IP connections, collection replaced with a ransom note) without needing a single named breach to ground it in. Zero corrections, 3-minute triage time.
 45. **Case_045 (Phase 5, AI voice/video-clone-assisted BEC, 3-alert batch, ticket-only, Arup 2024-grounded):** First case in the repo explicitly involving AI-generated social engineering rather than a technical exploit — no systems were compromised in either the scenario or the real incident it's grounded in; the entire attack succeeded by defeating a *human verification process* with synthetic media. Correctly named the precise control that failed: not "the employee was deceived" (deception is the premise of social engineering and doesn't itself indicate a process failure), but that a video call was substituted for the mandatory independent second-officer approval (segregation of duties) — the exact mechanism that let the real Arup fraud override an employee's own correct initial suspicion. Zero corrections, 4-minute triage time.
+46. **Case_046 (Phase 5, SaaS developer token theft, 3-alert batch, ticket-only, Slack 2022-grounded):** Explicitly ranked two co-occurring suspicious indicators by evidentiary strength rather than treating them as equal weight — off-hours timing is a soft signal with plausible innocent explanations (legitimate late-night work), while access to a resource entirely outside an actor's documented scope (a repo never previously touched) is a hard signal with no comparable innocent explanation. This sharpens the role/access-scope-mismatch principle from Case_033/Case_037 into an explicit hierarchy: not all red flags in the same alert carry equal weight, and naming which one is actually doing the evidentiary work strengthens the write-up. Zero corrections, 2-minute triage time.
+47. **Case_047 (🎯 150-Alert Milestone, Azure Hybrid Identity, 2-alert batch, ticket-only):** Established a clean separation between verdict-determining evidence and open investigative questions — an unapproved, no-ticket, off-hours federation trust bypassing a mandatory 2-person control process is TP on its technical and procedural severity alone, regardless of whether the responsible account was compromised or an insider acted outside policy. The unresolved account-status question (new IP, timing gap, no standalone compromise alert) was explicitly flagged for response and follow-up investigation rather than treated as something the verdict needed to wait on — a distinction worth making explicit, since conflating "the verdict is certain" with "every surrounding question is answered" would either delay a clear-cut TP call or falsely inflate confidence in unresolved details. Zero corrections, 3-minute triage time. **This case brings the repo to exactly 150 individually-triaged alerts, the project's original target set at the start of Phase 5.**
 
 ---
 
@@ -365,6 +367,34 @@ dual-approval policy) + FP (Y-003, a routine payment in full compliance with the
 dual-approval policy Y-002 bypassed). 0 corrections, 4-minute triage time. First case involving
 AI-generated social engineering with no technical compromise — precisely identified segregation
 of duties, not "the employee was fooled," as the actual control failure.
+
+**Case_046** (SaaS developer token theft, 3-alert batch, ticket-only): adapted from the December
+2022 Slack GitHub breach (stolen employee personal access tokens used to clone private
+repositories). TP (AA-001, a personal access token authenticating from a location outside its
+entire 6-month VPN-only history) + TP (AA-002, critical — the token used to clone two private
+repos, one entirely outside the token owner's documented access history, alongside a
+known-vulnerable repo containing unremediated hardcoded keys) + FP (AA-003, a routine,
+pattern-matched weekly developer repo refresh). 0 corrections, 2-minute triage time. Explicitly
+ranked timing vs. access-scope as unequal-strength indicators within the same alert.
+
+**Case_047 — 🎯 150-Alert Milestone** (Azure Hybrid Identity, 2-alert batch, ticket-only): TP
+(BB-001, critical — an unapproved federated domain trust established outside the mandatory
+2-person change process, granting tenant-wide password/MFA-bypass authentication capability)
++ FP (BB-002, a fully documented, CISO-approved password policy change). 0 corrections,
+3-minute triage time. **This case brings the repo to exactly 150 individually-triaged alerts.**
+
+---
+
+### 🎯 Milestone Note: 150 Alerts Reached
+
+Per explicit agreement with the analyst, Case_047 was designated as the final case counting
+toward the project's original 150-alert target, reached at exactly 47 cases. Cases 048, 049,
+and 050 continue the case numbering through to 50 as bonus, Final-Exam-style material (mixed
+alert queues, live interrupts, cross-case correlation, and a closing shift-handoff deliverable
+for Case_050), but their alerts are **not added to the 150-alert count** — they exist to
+continue demonstrating and stress-testing the analyst's skills beyond the original numeric
+target, consistent with how the project's Phase 3 and Phase 4 capstones (Cases 019-020, 030)
+were used as skill demonstrations beyond routine case counting.
 
 ---
 
